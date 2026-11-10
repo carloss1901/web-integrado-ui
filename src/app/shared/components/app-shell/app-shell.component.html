@@ -1,0 +1,15 @@
+<div class="shell">
+  <aside class="sidebar">
+    <a class="brand" routerLink="/inicio"><span>WI</span> Web Integrado</a>
+    <nav aria-label="Navegación principal">
+      <a routerLink="/inicio" routerLinkActive="active"><span aria-hidden="true">▦</span> Inicio</a>
+      <a href="javascript:void(0)" class="disabled"><span aria-hidden="true">▤</span> Módulos</a>
+      <a href="javascript:void(0)" class="disabled"><span aria-hidden="true">◉</span> Reportes</a>
+    </nav>
+    <small>v0.0.0 · Base Angular</small>
+  </aside>
+  <main class="main-content">
+    <header class="topbar"><div><p>PLATAFORMA</p><strong>Panel de gestión</strong></div><button type="button">Usuario demo <span>⌄</span></button></header>
+    <section class="page-content"><ng-content /></section>
+  </main>
+</div>
