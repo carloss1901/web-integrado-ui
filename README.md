@@ -1,11 +1,22 @@
 # Web Integrado UI
 
-Interfaz web del proyecto Web Integrado.
+Base Angular 20 para el proyecto Web Integrado.
 
-## Estado
+## Estructura
 
-Proyecto inicial. La rama principal de desarrollo es `develop`.
+```text
+src/app/
+├── api/       # Clientes y configuración de API
+├── core/      # Modelos, servicios, constantes e interceptores
+├── features/  # Módulos funcionales, como dashboard
+└── shared/    # Componentes reutilizables y layout
+```
 
-## Desarrollo
+## Inicio rápido
 
-Agrega aquí las instrucciones de instalación, configuración y ejecución cuando se incorporen los componentes del proyecto.
+```bash
+npm install
+npm start
+```
+
+La pantalla de ejemplo está disponible en `/inicio` y se carga por defecto.

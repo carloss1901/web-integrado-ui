@@ -1,0 +1,42 @@
+@use "variables" as *;
+
+.agrihusa {
+  .alert {
+    padding: 0.75rem;
+    border-radius: 4px;
+    display: flex;
+
+    &-flotante {
+      width: 360px;
+      max-width: 100%;
+      margin: 0 auto;
+      box-shadow: $box-shadow-lg;
+    }
+  }
+
+  .bg-alert-info .alert {
+    color: $nl-black;
+    background-color: $nl-blue-light;
+    border-color: $nl-blue;
+    .feather { color: $nl-blue; }
+  }
+  .bg-alert-warning .alert {
+    color: $nl-black;
+    background-color: $nl-orange-light;
+    border-color: $nl-orange;
+    .feather { color: $nl-orange; }
+  }
+  .bg-alert-danger .alert {
+    color: $nl-black;
+    background-color: $nl-red-ligth;
+    border-color: $nl-red;
+    .feather { color: $nl-red; }
+  }
+  .bg-alert-success .alert {
+    color: $nl-black;
+    background-color: $nl-green-light;
+    border-color: $nl-green;
+    .feather { color: $nl-green; }
+  }
+  .alert .feather { font-size: 18px; }
+}

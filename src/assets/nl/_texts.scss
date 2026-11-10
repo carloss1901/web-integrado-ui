@@ -1,0 +1,22 @@
+@use "variables" as *;
+
+// estilo para titulos de una bloque / seccion
+.title-group {
+	font-size: 1rem;
+	font-weight: 700;
+}
+
+// estilo para titulos de una bloque / seccion en mayuscula
+.title-group-uppercase {
+	font-size: 1rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	color: var(--bs-body-color);
+}
+
+.title-name-page {
+	color: $dgpmi-primary;
+	font-style: italic;
+	font-weight: 700;
+	margin: 0 !important;
+}
