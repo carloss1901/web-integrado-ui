@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-shell',
@@ -13,11 +13,17 @@ export class AppShellComponent {
   menuVisible = true;
   grupoAbierto = true;
 
+  constructor(private readonly router: Router) {}
+
   alternarMenu(): void {
     this.menuVisible = !this.menuVisible;
   }
 
   alternarGrupo(): void {
     this.grupoAbierto = !this.grupoAbierto;
+  }
+
+  salir(): void {
+    this.router.navigate(['/login']);
   }
 }

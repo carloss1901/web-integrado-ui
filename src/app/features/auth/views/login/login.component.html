@@ -1,0 +1,46 @@
+<main class="login-page">
+  <section class="login-visual" aria-label="CampusSeguro 360">
+    <div class="visual-content">
+      <span class="visual-kicker">CAMPUSSEGURO 360</span>
+      <h1>Un campus más seguro,<br /><em>todos los días.</em></h1>
+      <p>Gestiona incidencias, coordina responsables y convierte cada reporte en una acción de mejora.</p>
+      <div class="visual-status"><span class="status-dot"></span><span>Plataforma operativa y protegida</span></div>
+    </div>
+  </section>
+
+  <section class="login-panel">
+    <div class="login-card">
+      <div class="brand-mark" aria-hidden="true"><span class="feather icon-shield"></span></div>
+      <p class="eyebrow">PORTAL DE GESTIÓN</p>
+      <h2>Bienvenido de nuevo</h2>
+      <p class="intro">Ingresa a tu cuenta para continuar con la gestión del campus.</p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="ingresar()" novalidate>
+        <div class="field-group">
+          <label for="usuario">Usuario</label>
+          <div class="input-wrap">
+            <span class="field-icon feather icon-user" aria-hidden="true"></span>
+            <input id="usuario" type="text" formControlName="usuario" placeholder="Ingresa tu usuario" autocomplete="username" />
+          </div>
+          <small *ngIf="submitted && loginForm.controls.usuario.invalid" class="field-error">Ingresa tu usuario.</small>
+        </div>
+
+        <div class="field-group">
+          <div class="label-row"><label for="contrasenia">Contraseña</label><a href="javascript:void(0)">¿Olvidaste tu contraseña?</a></div>
+          <div class="input-wrap">
+            <span class="field-icon feather icon-lock" aria-hidden="true"></span>
+            <input id="contrasenia" [type]="passwordVisible ? 'text' : 'password'" formControlName="contrasenia" placeholder="Ingresa tu contraseña" autocomplete="current-password" />
+            <button type="button" class="password-toggle" (click)="passwordVisible = !passwordVisible" [attr.aria-label]="passwordVisible ? 'Ocultar contraseña' : 'Mostrar contraseña'"><span class="feather" [class.icon-eye]="!passwordVisible" [class.icon-eye-off]="passwordVisible"></span></button>
+          </div>
+          <small *ngIf="submitted && loginForm.controls.contrasenia.invalid" class="field-error">Ingresa tu contraseña.</small>
+        </div>
+
+        <label class="remember-option"><input type="checkbox" formControlName="recordar" /><span>Recordar sesión en este dispositivo</span></label>
+        <button class="login-button" type="submit">Ingresar <span class="feather icon-arrow-right" aria-hidden="true"></span></button>
+      </form>
+
+      <p class="security-note"><span class="feather icon-shield" aria-hidden="true"></span> Tu información se encuentra protegida.</p>
+    </div>
+    <p class="login-footer">© 2026 CampusSeguro 360 · Web Integrado</p>
+  </section>
+</main>

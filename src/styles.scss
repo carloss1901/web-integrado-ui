@@ -2,7 +2,18 @@
 @use "bootstrap/scss/bootstrap" with (
   $theme-colors: $theme-colors,
   $grid-breakpoints: $grid-breakpoints,
-  $container-max-widths: $container-max-widths
+  $container-max-widths: $container-max-widths,
+  $body-bg: $body-bg,
+  $body-color: $body-color,
+  $headings-color: $headings-color,
+  $card-bg: $card-bg,
+  $border-color: $border-color,
+  $link-color: $link-color,
+  $link-hover-color: $link-hover-color,
+  $input-bg: $input-bg,
+  $input-border-color: $input-border-color,
+  $input-focus-border-color: $input-focus-border-color,
+  $input-focus-box-shadow: $input-focus-box-shadow
 );
 @use "assets/nl/nl" as *;
 @use "@ng-select/ng-select/themes/default.theme.css";
@@ -13,7 +24,7 @@ body {
   margin: 0;
   min-height: 100%;
   font-family: Calibri, Arial, sans-serif;
-  background: #f4f7fc;
+  background: $cs-bg-general;
   position: relative;
 }
 
@@ -23,7 +34,7 @@ body {
 // cuyo contraste sobre blanco no alcanza WCAG AA.
 .ng-select .ng-select-container
   .ng-value-container .ng-placeholder {
-  color: #5f6062;
+  color: $cs-text-muted;
   opacity: 1;
 }
 
