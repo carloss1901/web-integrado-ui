@@ -1,0 +1,17 @@
+<div class="ui-data-table-shell table-responsive">
+  <table class="table ui-data-table ui-incidencias-table align-middle mb-0">
+    <caption class="visually-hidden">Lista de incidencias</caption>
+    <thead><tr><th>N°</th><th>Código</th><th>Título</th><th>Reportante</th><th>Categoría</th><th>Prioridad</th><th>Estado</th><th class="text-center">Acciones</th></tr></thead>
+    <tbody>
+      @if (loading) {
+        <tr><td colspan="8"><app-loading message="Cargando incidencias..."></app-loading></td></tr>
+      } @else if (!incidencias.length) {
+        <tr><td colspan="8"><app-no-results message="No hay incidencias registradas."></app-no-results></td></tr>
+      } @else {
+        @for (incidencia of incidencias; track incidencia.idIncidencia; let index = $index) {
+          <tr><td>{{ correlativo(index) }}</td><td><strong>{{ incidencia.codigo || "—" }}</strong></td><td>{{ incidencia.titulo || "—" }}</td><td>{{ incidencia.reportante || "—" }}</td><td>{{ incidencia.categoria || "—" }}</td><td><span [class]="prioridadClass(incidencia.prioridad)">{{ incidencia.prioridad || "—" }}</span></td><td><span [class]="estadoClass(incidencia.estado)"><span class="ui-status-dot"></span>{{ incidencia.estado || "—" }}</span></td><td class="text-center"><div class="ui-table-actions"><button type="button" class="ui-icon-button ui-icon-button--view" title="Visualizar incidencia" (click)="view.emit(incidencia)"><span class="feather icon-eye" aria-hidden="true"></span><span class="visually-hidden">Visualizar</span></button></div></td></tr>
+        }
+      }
+    </tbody>
+  </table>
+</div>

@@ -130,18 +130,6 @@
   color: #1E293B !important;
 }
 
-:host ::ng-deep .header-ng-select .ng-arrow-wrapper {
-  display: flex !important;
-  align-items: center;
-  padding-right: 4px;
-}
-
-:host ::ng-deep .header-ng-select .ng-arrow {
-  display: block !important;
-  border-color: #7a7a7a transparent transparent !important;
-  border-width: 5px 5px !important;
-}
-
 :host ::ng-deep .header-ng-select.ng-select-focused .ng-select-container,
 :host ::ng-deep .header-ng-select.ng-select-opened .ng-select-container {
   border: 0 !important;
@@ -149,7 +137,6 @@
 }
 
 :host ::ng-deep .header-ng-select .ng-dropdown-panel {
-  top: 33px !important;
   overflow: hidden;
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;

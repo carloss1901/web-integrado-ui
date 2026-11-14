@@ -1,15 +1,16 @@
 <div id="agrihusaApp" class="agrihusa">
+  <app-screen-loading />
   <div class="agrihusa-header">
     <header class="header_container-fluid">
       <div class="header_container-fluid-div">
         <div class="header-shell">
           <div class="header-container-left">
-            <div class="header-navbar-button px-2">
+            <div class="header-navbar-button px-2" *ngIf="!requiresRoleSelection">
               <button class="navbar-toggler text-white" type="button" aria-label="Abrir menú" (click)="alternarMenu()"><span class="feather icon-menu" aria-hidden="true"></span></button>
             </div>
             <div class="agrihusa-header__title"><span class="link-to-landing">WEB INTEGRADO</span></div>
-            <div class="header-combo">
-              <div class="header-combo-content"><span class="header-combo-label">MÓDULO ACTUAL</span><strong class="header-role-value">PANEL DE INICIO</strong></div>
+            <div class="header-combo" *ngIf="!requiresRoleSelection">
+              <div class="header-combo-content"><span class="header-combo-label">ROL ACTUAL</span><ng-select class="header-ng-select" [items]="roles" bindLabel="nombre" bindValue="id" [clearable]="false" [searchable]="false" [ngModel]="selectedRoleId" appendTo="body" (change)="cambiarRol($event)" aria-label="Seleccionar rol"></ng-select></div>
             </div>
           </div>
           <div class="header-container-right">
@@ -22,8 +23,8 @@
       </div>
     </header>
 
-    <div class="agrihusaApp-content-container">
-      <aside class="agrihusaApp-content_sidebar" [class.d-none]="!menuVisible">
+    <div class="agrihusaApp-content-container" [class.role-selection-active]="requiresRoleSelection">
+      <aside class="agrihusaApp-content_sidebar" [class.d-none]="!menuVisible || requiresRoleSelection">
         <section class="h-100">
           <aside class="agrihusa-sidebar" id="agrihusa-aside-menu">
             <div><div class="d-flex justify-content-between align-items-center content-header-menu"><span class="text-white mb-0">MENÚ</span><span class="menu-collapse-icon text-white" role="button" tabindex="0" (click)="alternarMenu()">‹</span></div></div>
@@ -37,6 +38,7 @@
                 <ul>
                   <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/inicio">Inicio</a></li>
                   <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/usuarios">Usuarios</a></li>
+                  <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/incidencias">Incidencias</a></li>
                   <li><span>Configuración</span></li>
                   <li><span>Reportes</span></li>
                 </ul>
@@ -46,7 +48,21 @@
           </aside>
         </section>
       </aside>
-      <main class="agrihusaApp-content_main"><ng-content /></main>
+      <main class="agrihusaApp-content_main">
+        <section *ngIf="requiresRoleSelection" class="role-selection-screen">
+          <div class="role-selection-card">
+            <span class="role-selection-kicker">ACCESO AL SISTEMA</span>
+            <h1>Selecciona un rol para continuar</h1>
+            <p>Elige el perfil con el que deseas trabajar en CampusSeguro 360.</p>
+            <div class="role-cards">
+              <button type="button" class="role-card" *ngFor="let role of roles" (click)="seleccionarRol(role.id)">
+                <span class="role-card-icon">♙</span><strong>{{ role.nombre }}</strong><span>Ingresar con este rol →</span>
+              </button>
+            </div>
+          </div>
+        </section>
+        <ng-content *ngIf="!requiresRoleSelection" />
+      </main>
     </div>
   </div>
 </div>

@@ -9,6 +9,7 @@ export { RegistrarComentarioRequest } from './models/registrar-comentario-reques
 export { ClasificarIncidenciaRequest } from './models/clasificar-incidencia-request';
 export { AsignarResponsableRequest } from './models/asignar-responsable-request';
 export { RegistrarAccionCorrectivaRequest } from './models/registrar-accion-correctiva-request';
+export { SeleccionarRolRequest } from './models/seleccionar-rol-request';
 export { LoginRequest } from './models/login-request';
 export { CustomPageUsuarioListadoResponse } from './models/custom-page-usuario-listado-response';
 export { CustomPageable } from './models/custom-pageable';

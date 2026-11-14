@@ -1,0 +1,14 @@
+<div class="frame-layout ui-page">
+  <div class="frame-layout__header"><div class="ui-page-heading"><app-topbar title="Gestión de incidencias"></app-topbar></div></div>
+  <div class="frame-layout__body">
+    <app-incidencias-filter [form]="filterForm" [estados]="estados" [categorias]="categorias" [severidades]="severidades" [prioridades]="prioridades" [ubicaciones]="ubicaciones" (search)="aplicarFiltros()" (clear)="limpiarFiltros()"></app-incidencias-filter>
+    <section class="ui-card ui-list-card"><div class="ui-section-header"><div><p class="ui-eyebrow">GESTIÓN OPERATIVA</p><h2 class="ui-section-title">Lista de incidencias</h2></div><app-button texto="Registrar incidencia" icon="plus" color="primary" (click)="abrirRegistrar()"></app-button></div>
+      <app-incidencias-table [incidencias]="incidencias" [loading]="loading" [page]="page" [pageSize]="pageSize" (view)="abrirVisualizar($event)"></app-incidencias-table>
+      <app-table-footer-pagination [totalItems]="totalItems" [totalItemsPerPage]="incidencias.length" [page]="page" [pageSize]="pageSize" [pageSizes]="pageSizeOptions" (changePaginate)="onChangePaginate($event)"></app-table-footer-pagination>
+    </section>
+  </div>
+</div>
+@if (false) {
+  <app-incidencia-modal></app-incidencia-modal>
+  <app-incidencia-view-modal [incidencia]="incidencias[0]"></app-incidencia-view-modal>
+}

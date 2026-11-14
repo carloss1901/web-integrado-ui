@@ -7,8 +7,14 @@ interface JwtPayload {
   nombres?: string;
   apePaterno?: string;
   apeMaterno?: string;
-  roles?: string[];
+  roles?: Array<{ id: number | null; nombre: string }>;
+  rolSeleccionado?: { id: number | null; nombre: string };
   sub?: string;
+}
+
+export interface SessionRole {
+  id: number;
+  nombre: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -29,6 +35,17 @@ export class SessionService {
     return Boolean(this.token);
   }
 
+  get availableRoles(): SessionRole[] {
+    const payload = this.token ? this.decodeToken(this.token) : {};
+    return (payload.roles ?? []).filter((role): role is { id: number; nombre: string } => role.id !== null);
+  }
+
+  get selectedRole(): SessionRole | null {
+    const payload = this.token ? this.decodeToken(this.token) : {};
+    const role = payload.rolSeleccionado;
+    return role?.id === null || role?.id === undefined ? null : role as SessionRole;
+  }
+
   startSession(token: string, _remember: boolean): void {
     const payload = this.decodeToken(token);
     const user: User = {
@@ -36,7 +53,7 @@ export class SessionService {
       name: [payload.nombres, payload.apePaterno, payload.apeMaterno]
         .filter(Boolean)
         .join(' ') || payload.sub || 'Usuario',
-      role: Array.isArray(payload.roles) ? payload.roles.join(', ') : 'Sin rol'
+      role: payload.rolSeleccionado?.nombre ?? payload.roles?.map((role) => role.nombre).join(', ') ?? 'Sin rol'
     };
     localStorage.removeItem(this.legacyTokenKey);
     localStorage.setItem(STORAGE_KEYS.token, token);

@@ -27,6 +27,21 @@
   width: 100%;
 }
 
+.header-role-select { background: transparent; border: 0; color: #fff; font-weight: 700; outline: none; cursor: pointer; }
+.header-role-select option { color: #0f2c59; }
+.role-selection-screen { min-height: 100%; display: grid; place-items: center; padding: 2rem; background: #f4f7fb; }
+.role-selection-active .agrihusaApp-content_main { width: 100%; }
+.role-selection-card { width: min(860px, 100%); padding: clamp(1.5rem, 4vw, 3rem); border-radius: 1rem; background: #fff; box-shadow: 0 18px 50px rgba(15, 44, 89, .1); text-align: center; }
+.role-selection-kicker { color: #0284c7; font-size: .75rem; font-weight: 800; letter-spacing: .12em; }
+.role-selection-card h1 { margin: .65rem 0 .5rem; color: #0f2c59; font-size: clamp(1.5rem, 3vw, 2.2rem); }
+.role-selection-card p { margin: 0 auto 1.8rem; color: #64748b; }
+.role-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; }
+.role-card { display: flex; min-height: 150px; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: .35rem; padding: 1.2rem; border: 1px solid #dbe6f2; border-radius: .8rem; color: #0f2c59; background: #f8fbff; text-align: left; cursor: pointer; transition: .2s ease; }
+.role-card:hover { border-color: #0284c7; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(2, 132, 199, .15); }
+.role-card-icon { font-size: 2rem; color: #0284c7; }
+.role-card strong { font-size: 1rem; }
+.role-card span:last-child { color: #64748b; font-size: .78rem; }
+
 @media (max-width: 960px) {
   .header-combo {
     display: none;

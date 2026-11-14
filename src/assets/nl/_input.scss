@@ -128,7 +128,9 @@
     gap: 0.25rem;
   }
 
-  input {
+  input,
+  textarea {
+    display: block;
     width: 100%;
     min-height: 35px;
     padding: 0.35rem 0.7rem;
@@ -136,7 +138,10 @@
     border-radius: 0.45rem;
     color: $cs-text-main;
     font-size: 0.92rem;
+    font-family: inherit;
+    line-height: 1.4;
     outline: none;
+    resize: vertical;
 
     &:focus {
       border-color: $cs-info;
@@ -144,11 +149,13 @@
     }
   }
 
-  &--filter input {
+  &--filter input,
+  &--filter textarea {
     padding: 0.35rem 0.65rem;
   }
 
-  &.is-invalid input {
+  &.is-invalid input,
+  &.is-invalid textarea {
     border-color: $cs-danger;
     box-shadow: 0 0 0 0.18rem rgba($cs-danger, 0.12);
   }

@@ -29,6 +29,22 @@ export class AuthService {
     );
   }
 
+  selectRole(idRol: number): Observable<unknown> {
+    const token = this.session.token;
+    return this.api.seleccionarRol({
+      Authorization: `Bearer ${token ?? ''}`,
+      body: { idRol }
+    }).pipe(
+      tap((response) => {
+        const result = response as ApiMessageResponse<string>;
+        if (!result.success || !result.data) {
+          throw new Error(result.message || 'No fue posible seleccionar el rol.');
+        }
+        this.session.startSession(result.data, true);
+      })
+    );
+  }
+
   logout(): void {
     this.session.clearSession();
   }

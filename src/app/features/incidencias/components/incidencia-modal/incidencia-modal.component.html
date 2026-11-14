@@ -1,0 +1,39 @@
+<div class="ui-modal-header">
+  <h2 class="ui-modal-title">Registrar incidencia</h2>
+  <button type="button" class="btn-close ui-modal-close" aria-label="Cerrar" (click)="cerrar()"></button>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="guardar()">
+  <div class="ui-modal-body">
+    <div class="ui-form-grid">
+      <div class="ui-field" [class.is-invalid]="controlInvalido('idCategoria')">
+        <label class="ui-field-label required" for="incidenciaCategoria">Categoría</label>
+        <ng-select inputId="incidenciaCategoria" [items]="categorias" bindLabel="descripcion" bindValue="maestroId" [clearable]="false" [searchable]="false" [placeholder]="placeholders.SELECCIONAR" formControlName="idCategoria"></ng-select>
+        @if (controlInvalido("idCategoria")) { <small>Selecciona una categoría.</small> }
+      </div>
+
+      <div class="ui-field" [class.is-invalid]="controlInvalido('idUbicacion')">
+        <label class="ui-field-label required" for="incidenciaUbicacion">Ubicación</label>
+        <ng-select inputId="incidenciaUbicacion" [items]="ubicaciones" bindLabel="descripcion" bindValue="maestroId" [clearable]="false" [searchable]="false" [placeholder]="placeholders.SELECCIONAR" formControlName="idUbicacion"></ng-select>
+        @if (controlInvalido("idUbicacion")) { <small>Selecciona una ubicación.</small> }
+      </div>
+
+      <div class="ui-field ui-field--full" [class.is-invalid]="controlInvalido('titulo')">
+        <label class="ui-field-label required" for="incidenciaTitulo">Título</label>
+        <input id="incidenciaTitulo" type="text" formControlName="titulo" [placeholder]="placeholders.INGRESAR" />
+        @if (controlInvalido("titulo")) { <small>El título es obligatorio.</small> }
+      </div>
+
+      <div class="ui-field ui-field--full" [class.is-invalid]="controlInvalido('descripcion')">
+        <label class="ui-field-label required" for="incidenciaDescripcion">Descripción</label>
+        <textarea id="incidenciaDescripcion" rows="5" formControlName="descripcion" [placeholder]="placeholders.INGRESAR"></textarea>
+        @if (controlInvalido("descripcion")) { <small>La descripción es obligatoria.</small> }
+      </div>
+    </div>
+  </div>
+
+  <div class="ui-modal-footer">
+    <app-button texto="Cancelar" icon="x" color="danger" (click)="cerrar()"></app-button>
+    <app-button texto="Registrar" icon="save" color="primary" type="submit"></app-button>
+  </div>
+</form>

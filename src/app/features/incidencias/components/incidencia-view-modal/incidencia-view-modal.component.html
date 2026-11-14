@@ -1,0 +1,53 @@
+<div class="ui-modal-header">
+  <h2 class="ui-modal-title">Detalle de incidencia</h2>
+  <button type="button" class="btn-close ui-modal-close" aria-label="Cerrar" (click)="activeModal.dismiss()"></button>
+</div>
+
+<div class="ui-modal-body">
+  <div class="ui-view-grid">
+    <div class="ui-view-item">
+      <span class="ui-field-label">Código</span>
+      <span class="ui-view-value">{{ incidencia.codigo || "-" }}</span>
+    </div>
+    <div class="ui-view-item">
+      <span class="ui-field-label">Estado</span>
+      <span class="ui-view-value">{{ incidencia.estado || "-" }}</span>
+    </div>
+    <div class="ui-view-item ui-view-item--full">
+      <span class="ui-field-label">Título</span>
+      <span class="ui-view-value">{{ incidencia.titulo || "-" }}</span>
+    </div>
+    <div class="ui-view-item">
+      <span class="ui-field-label">Reportante</span>
+      <span class="ui-view-value">{{ incidencia.reportante || "-" }}</span>
+    </div>
+    <div class="ui-view-item">
+      <span class="ui-field-label">Responsable</span>
+      <span class="ui-view-value">{{ incidencia.responsable || "-" }}</span>
+    </div>
+    <div class="ui-view-item">
+      <span class="ui-field-label">Categoría</span>
+      <span class="ui-view-value">{{ incidencia.categoria || "-" }}</span>
+    </div>
+    <div class="ui-view-item">
+      <span class="ui-field-label">Ubicación</span>
+      <span class="ui-view-value">{{ incidencia.ubicacion || "-" }}</span>
+    </div>
+    <div class="ui-view-item">
+      <span class="ui-field-label">Severidad</span>
+      <span class="ui-view-value">{{ incidencia.severidad || "-" }}</span>
+    </div>
+    <div class="ui-view-item">
+      <span class="ui-field-label">Prioridad</span>
+      <span class="ui-view-value">{{ incidencia.prioridad || "-" }}</span>
+    </div>
+    <div class="ui-view-item">
+      <span class="ui-field-label">Fecha de registro</span>
+      <span class="ui-view-value">{{ incidencia.fechaRegistro || "-" }}</span>
+    </div>
+    <div class="ui-view-item">
+      <span class="ui-field-label">Fecha límite</span>
+      <span class="ui-view-value">{{ incidencia.fechaLimite || "-" }}</span>
+    </div>
+  </div>
+</div>

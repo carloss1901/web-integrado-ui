@@ -7,6 +7,7 @@
         [items]="pageSizes"
         [clearable]="false"
         [searchable]="false"
+        appendTo="body"
         [ngModel]="localPageSize"
         (ngModelChange)="onChangePageSize($event)"
       ></ng-select>

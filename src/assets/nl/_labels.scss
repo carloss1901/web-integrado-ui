@@ -175,3 +175,39 @@
 .is-inactive .ui-status-dot {
   background: #ef4444;
 }
+
+.ui-status-badge.is-success {
+  color: #3f6b00;
+}
+
+.ui-status-badge.is-success .ui-status-dot {
+  background: #84cc16;
+}
+
+.ui-incident-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 4.5rem;
+  padding: 0.3rem 0.55rem;
+  border-radius: $border-radius-badge;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ui-incident-badge--high {
+  color: #9c1f24;
+  background: #fde5e5;
+}
+
+.ui-incident-badge--medium {
+  color: #8a4b00;
+  background: #fff1d6;
+}
+
+.ui-incident-badge--low {
+  color: #005f78;
+  background: #ddf4fa;
+}

@@ -1,7 +1,9 @@
 @use "variables" as *;
 
-.agrihusa {
+.agrihusa,
+.modal {
 	.ng-dropdown-panel {
+		z-index: 1060;
 		box-shadow: $box-shadow-lg;
 		// width: 250px;
 		.ng-dropdown-panel-items {
@@ -27,6 +29,22 @@
 			}
 		}
 
+		&.ng-select-single.ng-select-searchable {
+			.ng-select-container .ng-value-container .ng-input {
+				top: 0;
+				display: flex;
+				align-items: center;
+				height: 100%;
+				padding: 0 0.7rem;
+
+				input {
+					height: 100%;
+					padding: 0;
+					line-height: 1.4;
+				}
+			}
+		}
+
 		.ng-select-container {
 			font-size: 0.92rem;
 			height: 35px !important;
@@ -45,12 +63,7 @@
 			background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2364758B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M2 11l6-6 6 6'/></svg>");
 		}
 		.ng-dropdown-panel {
-			left: 0 !important;
-			right: auto;
-			top: 100% !important;
-			width: 100% !important;
 			margin-top: 0;
-			transform: none;
 			box-shadow: $box-shadow-lg;
 			.ng-dropdown-panel-items {
 				max-height: 222px;
@@ -120,4 +133,22 @@
 			margin: 2px 4px;           // espacio entre etiquetas
 		}
 	}
+}
+
+// Los dropdowns configurados con appendTo="body" quedan fuera de .agrihusa.
+// Estas reglas deben ser globales para que se muestren por encima de modales.
+.ng-dropdown-panel {
+	z-index: 1060 !important;
+
+	.ng-dropdown-panel-items {
+		max-height: 222px;
+	}
+}
+
+// Estado de validación reutilizable para cualquier ng-select.
+.ui-field.is-invalid .ng-select .ng-select-container,
+.ng-select.is-invalid .ng-select-container,
+.ng-select.ng-invalid.ng-touched .ng-select-container {
+	border-color: $cs-danger !important;
+	box-shadow: 0 0 0 0.18rem rgba($cs-danger, 0.12) !important;
 }

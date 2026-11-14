@@ -1,0 +1,16 @@
+<section class="ui-card ui-filter-card">
+  <div class="ui-filter-heading"><div><h2>Filtros de búsqueda</h2></div></div>
+  <form [formGroup]="form" (ngSubmit)="search.emit()">
+    <div class="ui-filter-grid row gx-3">
+      <div class="ui-field ui-field--filter col-12 col-md-4 mb-2"><label class="ui-field-label" for="filterCodigo">Código</label><input id="filterCodigo" type="text" formControlName="codigo" [placeholder]="placeholders.BUSCAR" /></div>
+      <div class="ui-field ui-field--filter col-12 col-md-4 mb-2"><label class="ui-field-label" for="filterTitulo">Título</label><input id="filterTitulo" type="text" formControlName="titulo" [placeholder]="placeholders.BUSCAR" /></div>
+      <div class="ui-field ui-field--filter col-12 col-md-4 mb-2"><label class="ui-field-label" for="filterReportante">Reportante</label><input id="filterReportante" type="text" formControlName="reportante" [placeholder]="placeholders.BUSCAR" /></div>
+      <div class="ui-field ui-field--filter col-12 col-md-4 mb-2"><label class="ui-field-label" for="filterCategoria">Categoría</label><ng-select inputId="filterCategoria" [items]="categorias" bindLabel="descripcion" bindValue="descripcion" [clearable]="true" [searchable]="false" [placeholder]="placeholders.SELECCIONAR" formControlName="categoria" appendTo="body"></ng-select></div>
+      <div class="ui-field ui-field--filter col-12 col-md-4 mb-2"><label class="ui-field-label" for="filterEstado">Estado</label><ng-select inputId="filterEstado" [items]="estados" bindLabel="descripcion" bindValue="descripcion" [clearable]="true" [searchable]="false" [placeholder]="placeholders.SELECCIONAR" formControlName="estado" appendTo="body"></ng-select></div>
+      <div class="ui-field ui-field--filter col-12 col-md-4 mb-2"><label class="ui-field-label" for="filterPrioridad">Prioridad</label><ng-select inputId="filterPrioridad" [items]="prioridades" bindLabel="descripcion" bindValue="descripcion" [clearable]="true" [searchable]="false" [placeholder]="placeholders.SELECCIONAR" formControlName="prioridad" appendTo="body"></ng-select></div>
+      <div class="ui-field ui-field--filter col-12 col-md-4 mb-2"><label class="ui-field-label" for="filterSeveridad">Severidad</label><ng-select inputId="filterSeveridad" [items]="severidades" bindLabel="descripcion" bindValue="descripcion" [clearable]="true" [searchable]="false" [placeholder]="placeholders.SELECCIONAR" formControlName="severidad" appendTo="body"></ng-select></div>
+      <div class="ui-field ui-field--filter col-12 col-md-4 mb-2"><label class="ui-field-label" for="filterUbicacion">Ubicación</label><ng-select inputId="filterUbicacion" [items]="ubicaciones" bindLabel="descripcion" bindValue="descripcion" [clearable]="true" [searchable]="false" [placeholder]="placeholders.SELECCIONAR" formControlName="ubicacion" appendTo="body"></ng-select></div>
+    </div>
+    <div class="ui-filter-actions-row"><div class="ui-filter-actions"><button type="submit" class="btn btn-primary"><span class="feather icon-search" aria-hidden="true"></span>Buscar</button><button type="button" class="btn btn-cancel" (click)="clear.emit()"><span class="feather icon-refresh-cw" aria-hidden="true"></span>Limpiar</button></div></div>
+  </form>
+</section>
