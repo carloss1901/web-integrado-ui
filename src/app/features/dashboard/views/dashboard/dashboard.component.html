@@ -35,6 +35,8 @@
       </article>
     </section>
 
+    <p *ngIf="loadError" class="dashboard-message" role="alert">No se pudieron cargar los indicadores. Verifica la conexión con el backend.</p>
+
     <section class="activity card-modern shadow-sm border-0" aria-labelledby="activity-title">
       <div class="section-title">
         <div>

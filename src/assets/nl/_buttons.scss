@@ -3,153 +3,237 @@
 
 .agrihusa,
 .modal {
-	.btn {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 14px;
-		height: $nl-btn-regular;
-		border-radius: $border-radius-sm;
-		.feather {
-			font-size: 16px;
-		}
-		&.btn-sm {
-			font-size: 12px;
-			height: $nl-btn-small;
-			.feather {
-				font-size: 14px;
-			}
-		}
-		&.btn-lg {
-			font-size: 16px;
-			height: $nl-btn-large;
-			.feather {
-				font-size: 18px;
-			}
-		}
-		&.btn-primary,
-		&.btn-danger {
-			color: white !important;
-		}
-		&.btn-secondary {
-			color: $nl-grey-40;
-			&:hover, &:active, &:focus {
-				background-color: $nl-grey-20 !important;
-				border-color: $nl-grey-20 !important;
-			}
-			&:active {
-				color: $nl-grey-30 !important;
-			}
-			&.disabled, &:disabled {
-				pointer-events: none;
-			}
-		}
-		&.btn-outline-primary {
-			&:hover, &:focus, &:active {
-				color: $nl-white !important;
-				background-color: $dgpmi-primary !important;
-			}
-		}
-		&.btn-outline-secondary {
-			color: $nl-grey-40;
-    		border-color: $nl-grey-20;
-			&:hover, &:active, &:focus {
-				background-color: $nl-grey-10 !important;
-				// border-color: $nl-grey-10 !important;
-			}
-			&:active {
-				color: $nl-grey-30 !important;
-			}
-			&.disabled, &:disabled {
-				color: $nl-grey-20;
-				pointer-events: none;
-			}
-		}
-		&.btn-outline-light {
-			color: $nl-grey-40;
-			background-color: transparent;
-			border-color: transparent;
-			&:hover {
-				color: $dgpmi-primary;
-			}
-			&:focus, &:active, &:active {
-				color: $dgpmi-primary !important;
-				background-color: transparent !important;
-				box-shadow: none !important;
-				border-color: transparent !important;
-			}
-			&.btn-icon {
-				.feather {
-					font-size: 18px;
-				}
-				&.btn-sm {
-					.feather {
-						font-size: 16px;
-					}
-				}
-				&.btn-lg {
-					.feather {
-						font-size: 20px;
-					}
-				}
-			}
-			&.disabled, &:disabled {
-				pointer-events: none;
-				color: $nl-grey-20;
-				background-color: transparent;
-			}
-		}
-		&-icon {
-			width: $nl-btn-regular;
-			&.btn-sm {
-				width: $nl-btn-small;
-			}
-			&.btn-lg {
-				width: $nl-btn-large;
-			}
-		}
-		&-menu {
-			cursor: pointer;
-			background-color: $dgpmi-primary-dark;
-			width: 44px;
-			height: 44px;
-			border-radius: 50%;
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			@include transition (all 0.3s cubic-bezier(0.0,0.0,0.2,1));
-		}
-		&.disabled, &:disabled {
-			opacity: .5;
-		}
-	}
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    height: $nl-btn-regular;
+    border-radius: $border-radius-sm;
+    .feather {
+      font-size: 16px;
+    }
+    &.btn-sm {
+      font-size: 12px;
+      height: $nl-btn-small;
+      .feather {
+        font-size: 14px;
+      }
+    }
+    &.btn-lg {
+      font-size: 16px;
+      height: $nl-btn-large;
+      .feather {
+        font-size: 18px;
+      }
+    }
+    &.btn-primary,
+    &.btn-danger {
+      color: white !important;
+    }
+    &.btn-secondary {
+      color: $nl-grey-40;
+      &:hover,
+      &:active,
+      &:focus {
+        background-color: $nl-grey-20 !important;
+        border-color: $nl-grey-20 !important;
+      }
+      &:active {
+        color: $nl-grey-30 !important;
+      }
+      &.disabled,
+      &:disabled {
+        pointer-events: none;
+      }
+    }
+    &.btn-outline-primary {
+      &:hover,
+      &:focus,
+      &:active {
+        color: $nl-white !important;
+        background-color: $dgpmi-primary !important;
+      }
+    }
+    &.btn-outline-secondary {
+      color: $nl-grey-40;
+      border-color: $nl-grey-20;
+      &:hover,
+      &:active,
+      &:focus {
+        background-color: $nl-grey-10 !important;
+        // border-color: $nl-grey-10 !important;
+      }
+      &:active {
+        color: $nl-grey-30 !important;
+      }
+      &.disabled,
+      &:disabled {
+        color: $nl-grey-20;
+        pointer-events: none;
+      }
+    }
+    &.btn-outline-light {
+      color: $nl-grey-40;
+      background-color: transparent;
+      border-color: transparent;
+      &:hover {
+        color: $dgpmi-primary;
+      }
+      &:focus,
+      &:active,
+      &:active {
+        color: $dgpmi-primary !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        border-color: transparent !important;
+      }
+      &.btn-icon {
+        .feather {
+          font-size: 18px;
+        }
+        &.btn-sm {
+          .feather {
+            font-size: 16px;
+          }
+        }
+        &.btn-lg {
+          .feather {
+            font-size: 20px;
+          }
+        }
+      }
+      &.disabled,
+      &:disabled {
+        pointer-events: none;
+        color: $nl-grey-20;
+        background-color: transparent;
+      }
+    }
+    &-icon {
+      width: $nl-btn-regular;
+      &.btn-sm {
+        width: $nl-btn-small;
+      }
+      &.btn-lg {
+        width: $nl-btn-large;
+      }
+    }
+    &-menu {
+      cursor: pointer;
+      background-color: $dgpmi-primary-dark;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      @include transition(all 0.3s cubic-bezier(0, 0, 0.2, 1));
+    }
+    &.disabled,
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
 
-	.btn-cancel {
-			display: inline-flex !important;
-			align-items: center;
-			justify-content: center;
-			width: auto;
-			padding: 0 12px;
-			font-size: 14px;
-			line-height: 1.5;
-			color: #141415 !important;
-			background-color: $nl-grey-10;
-		appearance: none;
-		border-radius: $border-radius-sm;
-		border: 1px solid #d2d3d5 !important;
-		height: 32px !important;
-		text-decoration: none;
-		&:hover {
-			background-color: $nl-grey-20;
-		}
-	}
-	
+  .btn-cancel {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    padding: 0 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #141415 !important;
+    background-color: $nl-grey-10;
+    appearance: none;
+    border-radius: $border-radius-sm;
+    border: 1px solid #d2d3d5 !important;
+    height: 32px !important;
+    text-decoration: none;
+    &:hover {
+      background-color: $nl-grey-20;
+    }
+  }
 }
 
 // Los modales de ng-bootstrap se insertan fuera de #agrihusa.
 // Mantener el texto blanco en los botones de peligro también en ese contexto.
 .btn.btn-danger {
-	color: $nl-white !important;
+  color: $nl-white !important;
 }
 
+// Acciones de filtros, tablas y botones renderizados por componentes.
+app-button {
+  display: inline-block;
+}
 
+app-button .btn,
+.ui-filter-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 35px;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.ui-filter-actions-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ui-filter-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.ui-filter-actions .btn-cancel {
+  padding: 0 0.75rem;
+  border: 1px solid #d2d3d5;
+  border-radius: 0.45rem;
+  color: #141415;
+  background: #f1f2f3;
+}
+
+.ui-filter-actions .btn-cancel:hover {
+  border-color: #c4c6c9;
+  color: #141415;
+  background: #e5e7e9;
+}
+
+.ui-icon-button {
+  display: inline-grid;
+  width: 34px;
+  height: 34px;
+  border: 1px solid $cs-border-color;
+  border-radius: 0.5rem;
+  background: $cs-bg-card;
+  color: $cs-text-muted;
+  place-items: center;
+  transition: 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &--edit:hover {
+    border-color: $cs-info;
+    color: $cs-info;
+    background: $nl-blue-light;
+  }
+
+  &--delete:hover {
+    border-color: $cs-danger;
+    color: $cs-danger;
+    background: $nl-red-ligth;
+  }
+}
+
+.ui-table-actions {
+  display: inline-flex;
+  gap: 0.4rem;
+}

@@ -1,0 +1,25 @@
+<button
+  [type]="type"
+  class="btn"
+  [class.btn-primary]="color === 'primary'"
+  [class.btn-light]="color === 'light'"
+  [class.btn-danger]="color === 'danger'"
+  [class.btn-secondary]="color === 'secondary'"
+  [disabled]="disabled || loading"
+>
+  @if (icon) {
+    <span
+      class="feather"
+      [class]="'feather icon-' + icon"
+      aria-hidden="true"
+    ></span>
+  }
+  <span>{{ loading ? loadingTexto : texto }}</span>
+  @if (loading) {
+    <span
+      class="spinner-border spinner-border-sm"
+      role="status"
+      aria-hidden="true"
+    ></span>
+  }
+</button>

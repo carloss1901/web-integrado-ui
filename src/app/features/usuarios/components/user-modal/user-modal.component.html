@@ -1,0 +1,126 @@
+<div class="ui-modal-header">
+  <h2 class="ui-modal-title">
+    {{ modoEdicion ? "Editar usuario" : "Agregar usuario" }}
+  </h2>
+  <button
+    type="button"
+    class="btn-close ui-modal-close"
+    aria-label="Cerrar"
+    (click)="cerrar()"
+  ></button>
+</div>
+
+<form [formGroup]="userForm" (ngSubmit)="guardar()">
+  <div class="ui-modal-body">
+    <div class="ui-form-grid">
+      <div class="ui-field" [class.is-invalid]="controlInvalido('usuario')">
+        <label for="usuario">Usuario</label>
+        <input
+          id="usuario"
+          type="text"
+          formControlName="usuario"
+          [placeholder]="placeholders.INGRESAR"
+          autocomplete="off"
+        />
+        @if (controlInvalido("usuario")) {
+          <small>Ingresa un usuario válido.</small>
+        }
+      </div>
+
+      <div class="ui-field" [class.is-invalid]="controlInvalido('idRol')">
+        <label for="idRol">Rol</label>
+        <ng-select
+          inputId="idRol"
+          [items]="roles"
+          bindLabel="descripcion"
+          bindValue="maestroId"
+          [placeholder]="placeholders.SELECCIONAR"
+          [clearable]="false"
+          [searchable]="true"
+          [class.is-invalid]="controlInvalido('idRol')"
+          formControlName="idRol"
+        ></ng-select>
+        @if (controlInvalido("idRol")) {
+          <small>Selecciona un rol.</small>
+        }
+      </div>
+
+      <div class="ui-field" [class.is-invalid]="controlInvalido('nombres')">
+        <label for="nombres">Nombres</label>
+        <input
+          id="nombres"
+          type="text"
+          formControlName="nombres"
+          [placeholder]="placeholders.INGRESAR"
+        />
+        @if (controlInvalido("nombres")) {
+          <small>Los nombres son obligatorios.</small>
+        }
+      </div>
+
+      <div class="ui-field" [class.is-invalid]="controlInvalido('apellidos')">
+        <label for="apellidos">Apellidos</label>
+        <input
+          id="apellidos"
+          type="text"
+          formControlName="apellidos"
+          [placeholder]="placeholders.INGRESAR"
+        />
+        @if (controlInvalido("apellidos")) {
+          <small>Los apellidos son obligatorios.</small>
+        }
+      </div>
+
+      <div
+        class="ui-field ui-field--full"
+        [class.is-invalid]="controlInvalido('correo')"
+      >
+        <label for="correo">Correo electrónico</label>
+        <input
+          id="correo"
+          type="email"
+          formControlName="correo"
+          [placeholder]="placeholders.INGRESAR"
+          autocomplete="email"
+        />
+        @if (controlInvalido("correo")) {
+          <small>Ingresa un correo válido.</small>
+        }
+      </div>
+
+      @if (!modoEdicion) {
+        <div
+          class="ui-field ui-field--full"
+          [class.is-invalid]="controlInvalido('password')"
+        >
+          <label for="password">Contraseña temporal</label>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            [placeholder]="placeholders.INGRESAR"
+            autocomplete="new-password"
+          />
+          @if (controlInvalido("password")) {
+            <small>Debe tener al menos 6 caracteres.</small>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="ui-modal-footer">
+    <app-button
+      texto="Cancelar"
+      icon="x"
+      color="danger"
+      (click)="cerrar()"
+    ></app-button>
+    <app-button
+      texto="Guardar"
+      icon="save"
+      color="primary"
+      type="submit"
+    ></app-button>
+  </div>
+</form>

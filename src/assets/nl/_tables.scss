@@ -1,114 +1,114 @@
 @use "variables" as *;
 
 .agrihusa {
-	.table-heading,
-	.table-footer {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		min-height: 48px;
-		padding-left: 1rem !important;
-		padding-right: 1rem !important;
-	}
-	.table-sticky {
-		height: 200px;
-		&.table-sticky--height {
-			height: 440px;
-		}
-		overflow-y: auto;
-		thead {
-			th {
-				top: 0;
-				position: sticky;
-				background-color: $nl-white;
-			}
-		}
-	}
-	.table {
-		&.table-consult {
-			tbody>tr {
-				&:hover {
-					color: $nl-black;
-					background: transparent;
-				}
-			}
-		}
-		thead {
-			th {
-				height: 48px;
-				font-size: 12px;
-				color: $nl-grey-40;
-				border: none;
-				background-color: $nl-grey-20;
-				height: $nl-medium-large;
-				text-transform: uppercase;
-				font-weight: 700;
-				line-height: 2;
-			}
-		}
-		tbody > tr {
-			cursor: pointer;
-			&:hover {
-				//color: $dgpmi-primary !important; //$nl-red;
-				background: $active-row; //$nl-red-ligth;
-			}
-			&.active {
-				background: $dgpmi-primary-light; //$nl-red-ligth;
-				> td {
-					color: $dgpmi-primary; //$nl-red;
-				}
-			}
-		}
-		td,
-		th {
-			vertical-align: middle;
-			height: 40px;
+  .table-heading,
+  .table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  .table-sticky {
+    height: 200px;
+    &.table-sticky--height {
+      height: 440px;
+    }
+    overflow-y: auto;
+    thead {
+      th {
+        top: 0;
+        position: sticky;
+        background-color: $nl-white;
+      }
+    }
+  }
+  .table {
+    &.table-consult {
+      tbody > tr {
+        &:hover {
+          color: $nl-black;
+          background: transparent;
+        }
+      }
+    }
+    thead {
+      th {
+        height: 48px;
+        font-size: 12px;
+        color: $nl-grey-40;
+        border: none;
+        background-color: $nl-grey-20;
+        height: $nl-medium-large;
+        text-transform: uppercase;
+        font-weight: 700;
+        line-height: 2;
+      }
+    }
+    tbody > tr {
+      cursor: pointer;
+      &:hover {
+        //color: $dgpmi-primary !important; //$nl-red;
+        background: $active-row; //$nl-red-ligth;
+      }
+      &.active {
+        background: $dgpmi-primary-light; //$nl-red-ligth;
+        > td {
+          color: $dgpmi-primary; //$nl-red;
+        }
+      }
+    }
+    td,
+    th {
+      vertical-align: middle;
+      height: 40px;
 
-			&.monto,
-			&.monto>input {
-				text-align: right !important;
-			}
-		}
-		&.table-sm {
-			td,
-			th {
-				height: auto;
-				padding: 0.2rem 0.25rem !important;
-			}
-		}
-		&.table-consulta {
-			tbody>tr {
-				cursor: inherit;
+      &.monto,
+      &.monto > input {
+        text-align: right !important;
+      }
+    }
+    &.table-sm {
+      td,
+      th {
+        height: auto;
+        padding: 0.2rem 0.25rem !important;
+      }
+    }
+    &.table-consulta {
+      tbody > tr {
+        cursor: inherit;
 
-				&:hover {
-					color: $nl-black;
-					background: transparent;
-				}
-			}
-		}
-	}
+        &:hover {
+          color: $nl-black;
+          background: transparent;
+        }
+      }
+    }
+  }
 
-	.table > :not(caption) > * > * {
-		background-color: transparent;
-	}
+  .table > :not(caption) > * > * {
+    background-color: transparent;
+  }
 
-	.no-results {
-		padding: 2rem 1.5rem;
-		text-align: center;
+  .no-results {
+    padding: 2rem 1.5rem;
+    text-align: center;
 
-		&__icon {
-			font-size: 1.75rem;
-			color: $nl-grey-30;
-		}
+    &__icon {
+      font-size: 1.75rem;
+      color: $nl-grey-30;
+    }
 
-		&__text {
-			font-size: 15px;
-			color: $nl-grey-30;
-			margin-bottom: 0;
-		}
-	}
+    &__text {
+      font-size: 15px;
+      color: $nl-grey-30;
+      margin-bottom: 0;
+    }
+  }
 
-	.table-no-pointer {
+  .table-no-pointer {
     tbody > tr {
       cursor: default !important;
       &:hover {
@@ -116,4 +116,90 @@
       }
     }
   }
+}
+
+// Tabla de datos con cabecera fija y cuerpo desplazable.
+.ui-data-table {
+  --bs-table-bg: transparent;
+  width: 100%;
+  min-width: 900px;
+  table-layout: fixed;
+  color: $nl-grey-50;
+  font-size: 0.95rem;
+
+  thead th {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid $cs-border-color;
+    background: $nl-disabled;
+    color: $nl-grey-50;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 0.7rem 0.75rem;
+    border-bottom: 1px solid $nl-disabled;
+    vertical-align: middle;
+  }
+
+  tbody tr:hover {
+    background: $cs-light;
+  }
+  strong {
+    color: $cs-primary;
+  }
+
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 6%;
+  }
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 15%;
+  }
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 19%;
+  }
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: 20%;
+  }
+  th:nth-child(5),
+  td:nth-child(5) {
+    width: 19%;
+  }
+  th:nth-child(6),
+  td:nth-child(6) {
+    width: 12%;
+  }
+  th:nth-child(7),
+  td:nth-child(7) {
+    width: 9%;
+  }
+}
+
+.ui-data-table-shell {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.ui-data-table-head {
+  margin-bottom: 0 !important;
+}
+.ui-data-table-body {
+  max-height: 360px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.ui-data-table-body .ui-data-table {
+  margin-bottom: 0 !important;
+}
+.ui-table-role-column {
+  padding-right: 1.25rem !important;
+}
+.ui-table-status-column {
+  padding-left: 1.25rem !important;
 }

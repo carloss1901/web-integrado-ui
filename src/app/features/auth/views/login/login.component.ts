@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +15,8 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   passwordVisible = false;
   submitted = false;
+  loading = false;
+  errorMessage = '';
 
   readonly loginForm = this.formBuilder.nonNullable.group({
     usuario: ['', Validators.required],
@@ -22,7 +26,8 @@ export class LoginComponent {
 
   constructor(
     private readonly formBuilder: FormBuilder,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly authService: AuthService
   ) {}
 
   ingresar(): void {
@@ -32,6 +37,17 @@ export class LoginComponent {
       return;
     }
 
-    this.router.navigate(['/inicio']);
+    this.loading = true;
+    this.errorMessage = '';
+    const { usuario, contrasenia, recordar } = this.loginForm.getRawValue();
+
+    this.authService.login(usuario, contrasenia, recordar).pipe(
+      finalize(() => this.loading = false)
+    ).subscribe({
+      next: () => this.router.navigate(['/inicio']),
+      error: (error: { error?: { message?: string }; message?: string }) => {
+        this.errorMessage = error.error?.message ?? error.message ?? 'No fue posible iniciar sesión.';
+      }
+    });
   }
 }

@@ -60,6 +60,7 @@
 .welcome-action { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: .45rem; padding: .7rem 1rem; border-radius: .6rem; box-shadow: 0 6px 14px rgba(15, 44, 89, .18); font-weight: 700; }
 
 .metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; margin: 1.5rem 0; }
+.dashboard-message { margin: -0.5rem 0 1.5rem; color: #B45309; font-size: .82rem; }
 .metric { position: relative; display: flex; align-items: center; gap: 1rem; min-height: 132px; padding: 1.35rem; overflow: hidden; transition: transform .2s ease, box-shadow .2s ease; }
 .metric:hover { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(15, 44, 89, .12) !important; }
 .metric-icon { display: grid; width: 46px; height: 46px; flex: 0 0 46px; border-radius: 50%; font-size: 1.18rem; place-items: center; }

@@ -1,0 +1,83 @@
+<div class="ui-data-table-shell table-responsive">
+  <table class="table ui-data-table ui-data-table-head align-middle mb-0">
+    <caption class="visually-hidden">
+      Lista de usuarios registrados
+    </caption>
+    <thead>
+      <tr>
+        <th>N°</th>
+        <th>Usuario</th>
+        <th>Nombre completo</th>
+        <th>Correo</th>
+        <th class="ui-table-role-column">Rol</th>
+        <th class="ui-table-status-column">Estado</th>
+        <th class="text-center">Acciones</th>
+      </tr>
+    </thead>
+  </table>
+
+  <div class="ui-data-table-body">
+    @if (loading) {
+      <app-loading message="Cargando usuarios..."></app-loading>
+    } @else if (!usuarios.length) {
+      <app-no-results message="No hay usuarios registrados."></app-no-results>
+    } @else {
+      <table class="table ui-data-table align-middle mb-0">
+        <tbody>
+          @for (
+            usuario of usuarios;
+            track usuario.idUsuario;
+            let index = $index
+          ) {
+            <tr>
+              <td>{{ correlativo(index) }}</td>
+              <td>
+                <strong>{{ usuario.usuario }}</strong>
+              </td>
+              <td>{{ usuario.nombres }} {{ usuario.apellidos }}</td>
+              <td>{{ usuario.correo }}</td>
+              <td class="ui-table-role-column">
+                <span
+                  class="ui-role-badge"
+                  [ngClass]="roleClass(usuario.roles)"
+                  >{{ usuario.roles || "Sin rol" }}</span
+                >
+              </td>
+              <td class="ui-table-status-column">
+                <span
+                  class="ui-status-badge"
+                  [class.is-inactive]="!usuario.activo"
+                >
+                  <span class="ui-status-dot"></span
+                  >{{ usuario.activo ? "Activo" : "Inactivo" }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="ui-table-actions">
+                  <button
+                    type="button"
+                    class="ui-icon-button ui-icon-button--edit"
+                    title="Editar usuario"
+                    (click)="edit.emit(usuario)"
+                  >
+                    <span class="feather icon-edit-2" aria-hidden="true"></span
+                    ><span class="visually-hidden">Editar</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="ui-icon-button ui-icon-button--delete"
+                    title="Eliminar usuario"
+                    (click)="delete.emit(usuario)"
+                  >
+                    <span class="feather icon-trash-2" aria-hidden="true"></span
+                    ><span class="visually-hidden">Eliminar</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

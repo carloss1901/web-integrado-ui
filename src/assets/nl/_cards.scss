@@ -16,15 +16,79 @@
 }
 
 .rounded-bottom-card {
-	border-bottom-left-radius: $border-radius-lg;
-	border-bottom-right-radius: $border-radius-lg;
+  border-bottom-left-radius: $border-radius-lg;
+  border-bottom-right-radius: $border-radius-lg;
 }
 
 .rounded-top-card {
-	border-top-left-radius: $border-radius-lg;
-	border-top-right-radius: $border-radius-lg;
+  border-top-left-radius: $border-radius-lg;
+  border-top-right-radius: $border-radius-lg;
 }
 
 .box-shadow-card {
-	box-shadow: $box-shadow;
+  box-shadow: $box-shadow;
+}
+
+// Tarjetas y encabezados reutilizables de mantenimiento.
+.ui-card {
+  border: 1px solid rgba($cs-primary, 0.07);
+  border-radius: 1rem;
+  background: $cs-bg-card;
+  box-shadow: 0 4px 14px rgba($cs-primary, 0.06);
+}
+
+.ui-filter-card {
+  margin-bottom: 1.25rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.ui-list-card {
+  padding: 1.15rem 1.25rem 0.8rem;
+}
+
+.ui-section-header,
+.ui-filter-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ui-section-header {
+  padding-bottom: 1.25rem;
+}
+.ui-filter-heading {
+  margin-bottom: 1rem;
+}
+
+.ui-eyebrow {
+  margin: 0 0 0.45rem;
+  color: $cs-success;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.ui-section-title,
+.ui-filter-title,
+.ui-filter-heading h2 {
+  margin: 0;
+  color: $cs-primary;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+@media (max-width: 700px) {
+  .ui-section-header,
+  .ui-filter-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .ui-list-card,
+  .ui-filter-card {
+    padding: 1.1rem;
+  }
 }

@@ -1,111 +1,173 @@
 @use "variables" as *;
 
 .labels {
-    border: none;
-    border-radius: $border-radius-badge;
-    font-size: 12px;
-    font-weight: normal;
+  border: none;
+  border-radius: $border-radius-badge;
+  font-size: 12px;
+  font-weight: normal;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 78px;
+  height: 21px;
+  padding: 0.35rem;
+  white-space: nowrap;
+  &.d-inline-flex {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 78px;
-	height: 21px;
-	padding: 0.35rem;
-    white-space: nowrap;
-	&.d-inline-flex {
-		display: inline-flex;
-	}
+  }
+  .labels_circle {
+    width: 6px;
+    height: 6px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-right: 0.25rem;
+  }
+  &.labels-verificado {
+    color: $nl-grey-30;
+    border-color: $nl-grey-20;
+    background-color: $nl-grey-10;
     .labels_circle {
-        width: 6px;
-        height: 6px;
-        border-radius: 6px;
-        display: inline-block;
-        margin-right: .25rem;
+      background-color: $nl-grey-30;
     }
-    &.labels-verificado {
-        color: $nl-grey-30;
-        border-color: $nl-grey-20;
-        background-color: $nl-grey-10;
-        .labels_circle {
-            background-color: $nl-grey-30;
-        }
+  }
+  &.labels-programado {
+    color: #3f6b00;
+    border-color: $nl-green;
+    background-color: $nl-green-light;
+    .labels_circle {
+      background-color: $nl-green;
     }
-    &.labels-programado {
-        color: #3f6b00;
-        border-color: $nl-green;
-        background-color: $nl-green-light;
-        .labels_circle {
-            background-color: $nl-green;
-        }
+  }
+  &.labels-pendiente,
+  &.labels-registrado {
+    color: #005f78;
+    border-color: $nl-blue;
+    background-color: $nl-blue-light;
+    .labels_circle {
+      background-color: $nl-blue;
     }
-    &.labels-pendiente, &.labels-registrado {
-        color: #005f78;
-        border-color: $nl-blue;
-        background-color: $nl-blue-light;
-        .labels_circle {
-            background-color: $nl-blue;
-        }
+  }
+  &.labels-rechazado {
+    color: $dgpmi-primary;
+    border-color: $dgpmi-primary;
+    background-color: $dgpmi-primary-light;
+    .labels_circle {
+      background-color: $dgpmi-primary;
     }
-    &.labels-rechazado {
-        color: $dgpmi-primary;
-        border-color: $dgpmi-primary;
-        background-color: $dgpmi-primary-light;
-        .labels_circle {
-            background-color: $dgpmi-primary;
-        }
+  }
+  &.labels-observado {
+    color: #8a4b00;
+    border-color: $nl-orange;
+    background-color: $nl-orange-light;
+    .labels_circle {
+      background-color: $nl-orange;
     }
-    &.labels-observado {
-        color: #8a4b00;
-        border-color: $nl-orange;
-        background-color: $nl-orange-light;
-        .labels_circle {
-            background-color: $nl-orange;
-        }
+  }
+  &.labels-enviadoopp {
+    color: $nl-grey-40;
+    border-color: $nl-grey-40;
+    background-color: $nl-grey-20;
+    .labels_circle {
+      background-color: $nl-grey-40;
     }
-    &.labels-enviadoopp {
-        color: $nl-grey-40;
-        border-color: $nl-grey-40;
-        background-color: $nl-grey-20;
-        .labels_circle {
-            background-color:$nl-grey-40;
-        }
+  }
+  &.labels-enproceso {
+    color: #4f559f;
+    border-color: #9398ec;
+    background-color: #e4e5fa;
+    .labels_circle {
+      background-color: #9398ec;
     }
-    &.labels-enproceso {
-        color: #4f559f;
-        border-color: #9398ec;
-        background-color: #E4E5FA;
-        .labels_circle {
-            background-color:#9398ec;
-        }
+  }
+  &.labels-activo,
+  &.labels-activado {
+    color: #3f6b00;
+    border-color: $nl-green;
+    background-color: $nl-green-light;
+    .labels_circle {
+      background-color: $nl-green;
     }
-    &.labels-activo, &.labels-activado {
-        color: #3f6b00;
-        border-color: $nl-green;
-        background-color: $nl-green-light;
-        .labels_circle {
-            background-color: $nl-green;
-        }
+  }
+  &.labels-inactivo,
+  &.labels-desactivado {
+    color: #9c1f24;
+    border-color: $nl-red;
+    background-color: $nl-red-ligth;
+    .labels_circle {
+      background-color: $nl-red;
     }
-    &.labels-inactivo, &.labels-desactivado {
-        color: #9c1f24;
-        border-color: $nl-red;
-        background-color: $nl-red-ligth;
-        .labels_circle {
-            background-color:$nl-red;
-        }
+  }
+  &.labels-culminado {
+    color: $nl-gris;
+    border-color: $nl-gris;
+    background-color: $nl-grey-10;
+    .labels_circle {
+      background-color: $nl-gris;
     }
-    &.labels-culminado {
-        color: $nl-gris;
-        border-color: $nl-gris;
-        background-color: $nl-grey-10;
-        .labels_circle {
-            background-color: $nl-gris;
-        }
-    }
+  }
 }
-.estado-circulo{
-	min-width: 24px;
-    height: 24px;
-    font-size: 16px;
-    font-weight: bold;
+.estado-circulo {
+  min-width: 24px;
+  height: 24px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+// Etiquetas de rol y estado para listados.
+.ui-role-badge {
+  display: inline-block;
+  padding: 0.4rem 0.7rem;
+  border-radius: $border-radius-badge;
+  background: $nl-grey-10;
+  color: $nl-grey-40;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ui-role-administrador {
+  color: #4f46a5;
+  background: #e8e7fa;
+}
+.ui-role-supervisor {
+  color: #8a4b00;
+  background: #fff1d6;
+}
+.ui-role-operador-mesa-control {
+  color: #005f78;
+  background: #ddf4fa;
+}
+.ui-role-responsable-atencion {
+  color: #3f6b00;
+  background: #e3f3d8;
+}
+.ui-role-reportante {
+  color: $nl-grey-40;
+  background: #e9eef3;
+}
+.ui-role-sin-rol {
+  color: $cs-text-muted;
+  background: $nl-grey-10;
+}
+
+.ui-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #0f766e;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.ui-status-badge.is-inactive {
+  color: #b45309;
+}
+.ui-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #14b8a6;
+}
+.is-inactive .ui-status-dot {
+  background: #f59e0b;
 }

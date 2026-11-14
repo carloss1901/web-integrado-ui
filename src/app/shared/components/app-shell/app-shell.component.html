@@ -14,7 +14,7 @@
           </div>
           <div class="header-container-right">
             <div class="header-dropdown-toggle">
-              <div class="profile-group text-white me-3"><div class="user-meta"><h6 class="mb-0 fw-bold header-container-right-username">USUARIO DEMO</h6><p class="mb-0 header-container-right-address">ADMINISTRADOR <span aria-hidden="true"> | </span> WEB INTEGRADO</p></div></div>
+              <div class="profile-group text-white me-3"><div class="user-meta"><h6 class="mb-0 fw-bold header-container-right-username">{{ user.name }}</h6><p class="mb-0 header-container-right-address">{{ user.role }} <span aria-hidden="true"> | </span> CAMPUSSEGURO 360</p></div></div>
               <button class="logout-btn" type="button" (click)="salir()"><span class="feather icon-log-out" aria-hidden="true"></span><span>Salir</span></button>
             </div>
           </div>
@@ -32,13 +32,16 @@
                 <span>GENERAL</span>
                 <svg class="accordion-chevron" [class.expanded]="grupoAbierto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
               </div>
-              <div class="accordion-body" *ngIf="grupoAbierto">
+              @if (grupoAbierto) {
+              <div class="accordion-body">
                 <ul>
-                  <li class="active"><a routerLink="/inicio" routerLinkActive="active">Inicio</a></li>
+                  <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/inicio">Inicio</a></li>
+                  <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/usuarios">Usuarios</a></li>
                   <li><span>Configuración</span></li>
                   <li><span>Reportes</span></li>
                 </ul>
               </div>
+              }
             </div>
           </aside>
         </section>

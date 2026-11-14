@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+import { SessionService } from '../../../core/services/session.service';
 
 @Component({
   selector: 'app-shell',
@@ -13,7 +15,15 @@ export class AppShellComponent {
   menuVisible = true;
   grupoAbierto = true;
 
-  constructor(private readonly router: Router) {}
+  constructor(
+    private readonly router: Router,
+    private readonly authService: AuthService,
+    private readonly session: SessionService
+  ) {}
+
+  get user() {
+    return this.session.currentUser;
+  }
 
   alternarMenu(): void {
     this.menuVisible = !this.menuVisible;
@@ -24,6 +34,7 @@ export class AppShellComponent {
   }
 
   salir(): void {
+    this.authService.logout();
     this.router.navigate(['/login']);
   }
 }

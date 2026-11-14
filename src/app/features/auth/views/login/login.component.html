@@ -36,7 +36,8 @@
         </div>
 
         <label class="remember-option"><input type="checkbox" formControlName="recordar" /><span>Recordar sesión en este dispositivo</span></label>
-        <button class="login-button" type="submit">Ingresar <span class="feather icon-arrow-right" aria-hidden="true"></span></button>
+        <p *ngIf="errorMessage" class="login-error" role="alert">{{ errorMessage }}</p>
+        <button class="login-button" type="submit" [disabled]="loading"><span *ngIf="loading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>{{ loading ? 'Ingresando...' : 'Ingresar' }} <span *ngIf="!loading" class="feather icon-arrow-right" aria-hidden="true"></span></button>
       </form>
 
       <p class="security-note"><span class="feather icon-shield" aria-hidden="true"></span> Tu información se encuentra protegida.</p>

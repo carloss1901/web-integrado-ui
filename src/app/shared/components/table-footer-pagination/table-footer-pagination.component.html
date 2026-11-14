@@ -1,0 +1,37 @@
+@if (totalItems) {
+  <div class="table-footer">
+    <div class="page-size-control">
+      <label for="tablePageSize">Filas</label>
+      <ng-select
+        inputId="tablePageSize"
+        [items]="pageSizes"
+        [clearable]="false"
+        [searchable]="false"
+        [ngModel]="localPageSize"
+        (ngModelChange)="onChangePageSize($event)"
+      ></ng-select>
+    </div>
+    <div class="content-pagination">
+      <span
+        >{{ rangeStart }} a {{ rangeEnd }} de {{ totalItems }} registros</span
+      >
+      <ngb-pagination
+        [maxSize]="3"
+        [rotate]="true"
+        [ellipses]="false"
+        [collectionSize]="totalItems"
+        [page]="localPage"
+        [pageSize]="localPageSize"
+        (pageChange)="onChangePage($event)"
+        aria-label="Paginado de usuarios"
+      >
+        <ng-template ngbPaginationPrevious
+          ><span aria-hidden="true">‹</span></ng-template
+        >
+        <ng-template ngbPaginationNext
+          ><span aria-hidden="true">›</span></ng-template
+        >
+      </ngb-pagination>
+    </div>
+  </div>
+}

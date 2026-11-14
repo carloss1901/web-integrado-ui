@@ -1,0 +1,6 @@
+:host { display: block; }
+.topbar { padding: 0; }
+.topbar-title { margin: 0; color: #0F2C59; font-size: clamp(1.45rem, 2.5vw, 1.85rem); font-weight: 700; letter-spacing: -.025em; }
+.topbar-subtitle { margin: .35rem 0 0; color: #64748B; font-size: .9rem; }
+.topbar-actions { display: flex; align-items: center; justify-content: flex-end; gap: .75rem; }
+@media (max-width: 575.98px) { .topbar-actions { justify-content: flex-start; margin-top: .75rem; } }

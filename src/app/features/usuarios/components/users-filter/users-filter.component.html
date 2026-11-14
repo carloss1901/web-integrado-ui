@@ -1,0 +1,74 @@
+<section class="ui-card ui-filter-card">
+  <div class="ui-filter-heading">
+    <div>
+      <h2>Filtros de búsqueda</h2>
+    </div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="search.emit()">
+    <div class="ui-filter-grid row gx-3">
+      <div class="ui-field ui-field--filter col-12 col-md-4 mb-2">
+        <label for="filterUsuario">Usuario</label>
+        <input
+          id="filterUsuario"
+          type="text"
+          formControlName="usuario"
+          [placeholder]="placeholders.BUSCAR"
+        />
+      </div>
+      <div class="ui-field ui-field--filter col-12 col-md-4 mb-2">
+        <label for="filterNombres">Nombres</label>
+        <input
+          id="filterNombres"
+          type="text"
+          formControlName="nombres"
+          [placeholder]="placeholders.BUSCAR"
+        />
+      </div>
+      <div class="ui-field ui-field--filter col-12 col-md-4 mb-2">
+        <label for="filterApellidos">Apellidos</label>
+        <input
+          id="filterApellidos"
+          type="text"
+          formControlName="apellidos"
+          [placeholder]="placeholders.BUSCAR"
+        />
+      </div>
+      <div class="ui-field ui-field--filter col-12 col-md-4 mb-2">
+        <label for="filterCorreo">Correo</label>
+        <input
+          id="filterCorreo"
+          type="text"
+          formControlName="correo"
+          [placeholder]="placeholders.BUSCAR"
+        />
+      </div>
+      <div class="ui-field ui-field--filter col-12 col-md-4 mb-2">
+        <label for="filterEstado">Estado</label>
+        <ng-select
+          inputId="filterEstado"
+          [items]="estadoOptions"
+          bindLabel="descripcion"
+          bindValue="valor"
+          [clearable]="false"
+          [searchable]="false"
+          [placeholder]="placeholders.SELECCIONAR"
+          formControlName="estado"
+        ></ng-select>
+      </div>
+    </div>
+
+    <div class="ui-filter-actions-row">
+      <div class="ui-filter-actions">
+        <button type="submit" class="btn btn-primary">
+          <span class="feather icon-search" aria-hidden="true"></span>
+          Buscar
+        </button>
+        <button type="button" class="btn btn-cancel" (click)="clear.emit()">
+          <span class="feather icon-refresh-cw" aria-hidden="true"></span>
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </form>
+</section>

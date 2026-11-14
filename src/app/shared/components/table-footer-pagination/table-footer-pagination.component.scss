@@ -1,0 +1,7 @@
+:host { display: block; }
+.table-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: 1rem; border-top: 1px solid #E2E8F0; color: #64748B; font-size: .86rem; }
+.page-size-control { display: flex; align-items: center; gap: .5rem; }.page-size-control label { white-space: nowrap; }.page-size-control .ng-select { width: 82px; }
+.content-pagination { display: flex; align-items: center; gap: 1rem; }.content-pagination ngb-pagination { margin: 0; }
+:host ::ng-deep .ng-select .ng-select-container { min-height: 32px; height: 32px; font-size: .86rem; }
+:host ::ng-deep .pagination { gap: .3rem; }.content-pagination ::ng-deep .page-link { min-width: 34px; height: 34px; border: 1px solid #CBD5E1; border-radius: .45rem !important; color: #475569; display: grid; place-items: center; }.content-pagination ::ng-deep .page-item.active .page-link { border-color: #0284C7; background: #0284C7; color: #fff; }.content-pagination ::ng-deep .page-item.disabled .page-link { opacity: .45; }
+@media (max-width: 700px) { .table-footer { align-items: flex-start; flex-direction: column; }.content-pagination { width: 100%; justify-content: space-between; flex-wrap: wrap; gap: .75rem; } }

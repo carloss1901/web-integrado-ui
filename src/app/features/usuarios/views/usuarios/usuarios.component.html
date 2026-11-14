@@ -1,0 +1,64 @@
+<div class="frame-layout ui-page">
+  <div class="frame-layout__header">
+    <div class="ui-page-heading">
+      <app-topbar title="Gestión de usuarios"></app-topbar>
+    </div>
+  </div>
+
+  <div class="frame-layout__body">
+    @if (successMessage) {
+      <div class="alert alert-success alert-dismissible" role="status">
+        {{ successMessage }}
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Cerrar"
+          (click)="successMessage = ''"
+        ></button>
+      </div>
+    }
+    @if (errorMessage) {
+      <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+    }
+
+    <app-users-filter
+      [form]="filterForm"
+      [estadoOptions]="estadoOptions"
+      (search)="aplicarFiltros()"
+      (clear)="limpiarFiltros()"
+    ></app-users-filter>
+
+    <section class="ui-card ui-list-card">
+      <div class="ui-section-header">
+        <div>
+          <p class="ui-eyebrow">DIRECTORIO DE ACCESOS</p>
+          <h2 class="ui-section-title">Lista de usuarios</h2>
+        </div>
+        <app-button
+          texto="Agregar usuario"
+          icon="plus"
+          color="primary"
+          (click)="abrirCrear()"
+        ></app-button>
+      </div>
+
+      <app-users-table
+        [usuarios]="usuarios"
+        [loading]="loading"
+        [page]="page"
+        [pageSize]="pageSize"
+        (edit)="abrirEditar($event)"
+        (delete)="eliminar($event)"
+      ></app-users-table>
+
+      <app-table-footer-pagination
+        [totalItems]="totalItems"
+        [totalItemsPerPage]="usuarios.length"
+        [page]="page"
+        [pageSize]="pageSize"
+        [pageSizes]="pageSizeOptions"
+        (changePaginate)="onChangePaginate($event)"
+      ></app-table-footer-pagination>
+    </section>
+  </div>
+</div>
