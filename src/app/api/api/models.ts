@@ -10,9 +10,10 @@ export { ClasificarIncidenciaRequest } from './models/clasificar-incidencia-requ
 export { AsignarResponsableRequest } from './models/asignar-responsable-request';
 export { RegistrarAccionCorrectivaRequest } from './models/registrar-accion-correctiva-request';
 export { LoginRequest } from './models/login-request';
-export { CustomPageUsuarioProjection } from './models/custom-page-usuario-projection';
+export { CustomPageUsuarioListadoResponse } from './models/custom-page-usuario-listado-response';
 export { CustomPageable } from './models/custom-pageable';
-export { UsuarioProjection } from './models/usuario-projection';
+export { MaestroResponse } from './models/maestro-response';
+export { UsuarioListadoResponse } from './models/usuario-listado-response';
 export { CustomPageIncidenciaHistorialResponse } from './models/custom-page-incidencia-historial-response';
 export { IncidenciaHistorialResponse } from './models/incidencia-historial-response';
 export { CustomPageIncidenciaEvidenciaResponse } from './models/custom-page-incidencia-evidencia-response';
@@ -25,4 +26,3 @@ export { CustomPageIncidenciaResponse } from './models/custom-page-incidencia-re
 export { IncidenciaResponse } from './models/incidencia-response';
 export { IndicadoresIncidenciaResponse } from './models/indicadores-incidencia-response';
 export { IncidenciaBusquedaResponse } from './models/incidencia-busqueda-response';
-export { MaestroResponse } from './models/maestro-response';

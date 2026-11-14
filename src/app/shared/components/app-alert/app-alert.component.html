@@ -1,0 +1,25 @@
+@if (alertService.toasts.length) {
+  <div class="ui-alert-host">
+    @for (toast of alertService.toasts; track toast) {
+      <ngb-toast
+        [class]="toast.classname"
+        [autohide]="true"
+        [delay]="toast.delay"
+        (hidden)="cerrar(toast)"
+      >
+        <div class="alert ui-alert" role="alert">
+          <span class="feather" [class]="getIcon(toast.classname)"></span>
+          <div class="ui-alert-message">
+            <span>{{ toast.message }}</span>
+            @for (error of toast.errores; track error) {
+              <span>{{ error.campo }}: {{ error.mensaje }}</span>
+            }
+          </div>
+          <button type="button" class="btn-close-toast" aria-label="Cerrar" (click)="cerrar(toast)">
+            <i class="feather icon-x"></i>
+          </button>
+        </div>
+      </ngb-toast>
+    }
+  </div>
+}

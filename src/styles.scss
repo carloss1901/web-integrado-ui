@@ -15,8 +15,8 @@
   $input-focus-border-color: $input-focus-border-color,
   $input-focus-box-shadow: $input-focus-box-shadow
 );
-@use "assets/nl/nl" as *;
 @use "@ng-select/ng-select/themes/default.theme.css";
+@use "assets/nl/nl" as *;
 @use "assets/icons/css/iconfont.css";
 
 html,

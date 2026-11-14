@@ -40,3 +40,51 @@
   }
   .alert .feather { font-size: 18px; }
 }
+
+.ui-alert-host {
+  position: fixed;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 1200;
+  width: min(380px, calc(100vw - 1.5rem));
+}
+
+.ui-alert-host .toast {
+  margin-bottom: 0.6rem;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.ui-alert-host .toast-body { padding: 0; }
+
+.ui-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid transparent;
+  border-radius: 0.6rem;
+  box-shadow: $box-shadow-lg;
+}
+
+.bg-alert-success .ui-alert { color: $nl-black; background: $nl-green-light; border-color: $nl-green; }
+.bg-alert-warning .ui-alert { color: $nl-black; background: $nl-orange-light; border-color: $nl-orange; }
+.bg-alert-danger .ui-alert { color: $nl-black; background: $nl-red-ligth; border-color: $nl-red; }
+.bg-alert-info .ui-alert { color: $nl-black; background: $nl-blue-light; border-color: $nl-blue; }
+
+.ui-alert-message {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.btn-close-toast {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}

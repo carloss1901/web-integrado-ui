@@ -1,14 +1,16 @@
 /* tslint:disable */
 /* eslint-disable */
-export interface UsuarioProjection {
+import { MaestroResponse } from './maestro-response';
+export interface UsuarioListadoResponse {
   activo?: boolean;
-  apellidos?: string;
+  apeMaterno?: string;
+  apePaterno?: string;
   correo?: string;
   estadoDsc?: string;
   fecModificacion?: string;
   fecRegistro?: string;
   idUsuario?: number;
   nombres?: string;
-  roles?: string;
+  roles?: Array<MaestroResponse>;
   usuario?: string;
 }

@@ -1,0 +1,60 @@
+<div class="ui-modal-header">
+  <h2 class="ui-modal-title">Visualizar usuario</h2>
+  <button
+    type="button"
+    class="btn-close ui-modal-close"
+    aria-label="Cerrar"
+    (click)="cerrar()"
+  ></button>
+</div>
+
+<div class="ui-modal-body">
+  <div class="ui-view-grid">
+    <div class="ui-view-item">
+      <span class="ui-field-label">DNI</span>
+      <span class="ui-view-value">{{ usuario.usuario || "-" }}</span>
+    </div>
+    <div class="ui-view-item">
+      <span class="ui-field-label">Nombres</span>
+      <span class="ui-view-value">{{ usuario.nombres || "-" }}</span>
+    </div>
+    <div class="ui-view-item">
+      <span class="ui-field-label">Apellido paterno</span>
+      <span class="ui-view-value">{{ usuario.apePaterno || "-" }}</span>
+    </div>
+    <div class="ui-view-item">
+      <span class="ui-field-label">Apellido materno</span>
+      <span class="ui-view-value">{{ usuario.apeMaterno || "-" }}</span>
+    </div>
+    <div class="ui-view-item ui-view-item--full">
+      <span class="ui-field-label">Correo electrónico</span>
+      <span class="ui-view-value">{{ usuario.correo || "-" }}</span>
+    </div>
+    <div class="ui-view-item ui-view-item--full">
+      <span class="ui-field-label">Roles</span>
+      <div class="ui-view-roles">
+        @if (usuario.roles?.length) {
+          @for (rol of usuario.roles; track rol.maestroId) {
+            <span
+              class="ui-role-badge"
+              [class]="roleClass(rol.descripcion)"
+            >{{ rol.descripcion }}</span>
+          }
+        } @else {
+          <span class="ui-role-badge ui-role-sin-rol">Sin rol</span>
+        }
+      </div>
+    </div>
+    <div class="ui-view-item">
+      <span class="ui-field-label">Estado</span>
+      <span
+        class="ui-status-badge"
+        [class.is-inactive]="!usuario.activo"
+      >
+        <span class="ui-status-dot"></span>
+        {{ usuario.activo ? "Activo" : "Inactivo" }}
+      </span>
+    </div>
+  </div>
+</div>
+

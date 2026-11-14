@@ -34,14 +34,22 @@
               <td>
                 <strong>{{ usuario.usuario }}</strong>
               </td>
-              <td>{{ usuario.nombres }} {{ usuario.apellidos }}</td>
+              <td>
+                {{ usuario.nombres }} {{ usuario.apePaterno }}
+                {{ usuario.apeMaterno }}
+              </td>
               <td>{{ usuario.correo }}</td>
               <td class="ui-table-role-column">
-                <span
-                  class="ui-role-badge"
-                  [ngClass]="roleClass(usuario.roles)"
-                  >{{ usuario.roles || "Sin rol" }}</span
-                >
+                @if (usuario.roles?.length) {
+                  @for (rol of usuario.roles; track rol.maestroId) {
+                    <span
+                      class="ui-role-badge"
+                      [ngClass]="roleClass(rol.descripcion)"
+                    >{{ rol.descripcion }}</span>
+                  }
+                } @else {
+                  <span class="ui-role-badge ui-role-sin-rol">Sin rol</span>
+                }
               </td>
               <td class="ui-table-status-column">
                 <span
@@ -56,6 +64,15 @@
                 <div class="ui-table-actions">
                   <button
                     type="button"
+                    class="ui-icon-button ui-icon-button--view"
+                    title="Visualizar usuario"
+                    (click)="view.emit(usuario)"
+                  >
+                    <span class="feather icon-eye" aria-hidden="true"></span
+                    ><span class="visually-hidden">Visualizar</span>
+                  </button>
+                  <button
+                    type="button"
                     class="ui-icon-button ui-icon-button--edit"
                     title="Editar usuario"
                     (click)="edit.emit(usuario)"
@@ -63,15 +80,27 @@
                     <span class="feather icon-edit-2" aria-hidden="true"></span
                     ><span class="visually-hidden">Editar</span>
                   </button>
-                  <button
-                    type="button"
-                    class="ui-icon-button ui-icon-button--delete"
-                    title="Eliminar usuario"
-                    (click)="delete.emit(usuario)"
-                  >
-                    <span class="feather icon-trash-2" aria-hidden="true"></span
-                    ><span class="visually-hidden">Eliminar</span>
-                  </button>
+                  @if (usuario.activo) {
+                    <button
+                      type="button"
+                      class="ui-icon-button ui-icon-button--delete"
+                      title="Eliminar usuario"
+                      (click)="delete.emit(usuario)"
+                    >
+                      <span class="feather icon-trash-2" aria-hidden="true"></span
+                      ><span class="visually-hidden">Eliminar</span>
+                    </button>
+                  } @else {
+                    <button
+                      type="button"
+                      class="ui-icon-button ui-icon-button--reactivate"
+                      title="Reactivar usuario"
+                      (click)="reactivate.emit(usuario)"
+                    >
+                      <span class="feather icon-refresh-cw" aria-hidden="true"></span
+                      ><span class="visually-hidden">Reactivar</span>
+                    </button>
+                  }
                 </div>
               </td>
             </tr>

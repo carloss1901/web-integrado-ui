@@ -1,7 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface ActualizarUsuarioRequest {
-  apellidos: string;
+  apeMaterno?: string;
+  apePaterno?: string;
   correo: string;
   idUsuario: number;
   idsRoles: Array<number>;

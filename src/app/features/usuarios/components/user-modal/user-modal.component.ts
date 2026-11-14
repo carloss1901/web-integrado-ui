@@ -2,22 +2,23 @@ import { CommonModule } from "@angular/common";
 import { Component, Input, OnInit } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
-import { NgSelectModule } from "@ng-select/ng-select";
-
 import { MaestroResponse } from "../../../../api/api/models/maestro-response";
-import { UsuarioProjection } from "../../../../api/api/models/usuario-projection";
+import { UsuarioListadoResponse } from "../../../../api/api/models/usuario-listado-response";
 import { PlaceholderEnum } from "../../../../core/enums/placeholder.enum";
+import { AlertService } from "../../../../core/services/alert.service";
 import { AppButtonComponent } from "../../../../shared/components/app-button/app-button.component";
+import { AppLoadingComponent } from "../../../../shared/components/app-loading/app-loading.component";
+import { OnlyNumbersDirective } from "../../../../shared/directives/only-numbers.directive";
 
 export interface UserModalResult {
   modo: "crear" | "editar";
   idUsuario?: number;
   usuario: string;
   nombres: string;
-  apellidos: string;
+  apePaterno: string;
+  apeMaterno: string;
   correo: string;
-  password?: string;
-  idRol: number;
+  idsRoles: number[];
 }
 
 @Component({
@@ -26,59 +27,65 @@ export interface UserModalResult {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    NgSelectModule,
     AppButtonComponent,
+    AppLoadingComponent,
+    OnlyNumbersDirective,
   ],
   templateUrl: "./user-modal.component.html",
 })
 export class UserModalComponent implements OnInit {
   readonly placeholders = PlaceholderEnum;
   @Input() roles: MaestroResponse[] = [];
-  @Input() usuario: UsuarioProjection | null = null;
+  @Input() usuario: UsuarioListadoResponse | null = null;
+  @Input() cargandoRoles = false;
 
   submitted = false;
 
   readonly userForm = this.formBuilder.nonNullable.group({
-    usuario: ["", [Validators.required, Validators.maxLength(50)]],
+    usuario: [
+      "",
+      [Validators.required, Validators.maxLength(8), Validators.pattern(/^\d{1,8}$/)],
+    ],
     nombres: ["", [Validators.required, Validators.maxLength(100)]],
-    apellidos: ["", [Validators.required, Validators.maxLength(100)]],
+    apePaterno: ["", [Validators.required, Validators.maxLength(100)]],
+    apeMaterno: ["", [Validators.maxLength(100)]],
     correo: [
       "",
       [Validators.required, Validators.email, Validators.maxLength(150)],
     ],
-    password: ["", [Validators.required, Validators.minLength(6)]],
-    idRol: this.formBuilder.control<number | null>(null, [
-      Validators.required,
-      Validators.min(1),
+    idsRoles: this.formBuilder.nonNullable.control<number[]>([], [
+      Validators.minLength(1),
     ]),
   });
 
   constructor(
     private readonly formBuilder: FormBuilder,
     public readonly activeModal: NgbActiveModal,
+    private readonly alertService: AlertService,
   ) {}
 
   ngOnInit(): void {
     if (!this.usuario) return;
 
-    const role = this.roles.find(
-      (item) => item.descripcion === this.usuario?.roles,
-    );
     this.userForm.reset({
       usuario: this.usuario.usuario ?? "",
       nombres: this.usuario.nombres ?? "",
-      apellidos: this.usuario.apellidos ?? "",
+      apePaterno: this.usuario.apePaterno ?? "",
+      apeMaterno: this.usuario.apeMaterno ?? "",
       correo: this.usuario.correo ?? "",
-      password: "",
-      idRol: role?.maestroId ?? null,
+      idsRoles: (this.usuario.roles ?? [])
+        .map((role) => role.maestroId)
+        .filter((id): id is number => id !== undefined),
     });
     this.userForm.controls.usuario.disable();
-    this.userForm.controls.password.clearValidators();
-    this.userForm.controls.password.updateValueAndValidity();
   }
 
   get modoEdicion(): boolean {
     return this.usuario !== null;
+  }
+
+  get formularioValido(): boolean {
+    return this.userForm.valid && !this.cargandoRoles;
   }
 
   controlInvalido(controlName: string): boolean {
@@ -86,10 +93,30 @@ export class UserModalComponent implements OnInit {
     return Boolean(control?.invalid && (control.touched || this.submitted));
   }
 
+  rolSeleccionado(idRol: number): boolean {
+    return this.userForm.controls.idsRoles.value.includes(idRol);
+  }
+
+  alternarRol(idRol: number): void {
+    const rolesSeleccionados = this.userForm.controls.idsRoles.value;
+    const idsRoles = rolesSeleccionados.includes(idRol)
+      ? rolesSeleccionados.filter((id) => id !== idRol)
+      : [...rolesSeleccionados, idRol];
+
+    this.userForm.controls.idsRoles.setValue(idsRoles);
+    this.userForm.controls.idsRoles.markAsDirty();
+    this.userForm.controls.idsRoles.markAsTouched();
+  }
+
   guardar(): void {
     this.submitted = true;
     this.userForm.markAllAsTouched();
-    if (this.userForm.invalid) return;
+    if (!this.formularioValido) {
+      this.alertService.warning(
+        "Completa los campos obligatorios y selecciona al menos un rol.",
+      );
+      return;
+    }
 
     const value = this.userForm.getRawValue();
     const result: UserModalResult = {
@@ -97,10 +124,10 @@ export class UserModalComponent implements OnInit {
       idUsuario: this.usuario?.idUsuario,
       usuario: value.usuario.trim(),
       nombres: value.nombres.trim(),
-      apellidos: value.apellidos.trim(),
+      apePaterno: value.apePaterno.trim(),
+      apeMaterno: value.apeMaterno.trim(),
       correo: value.correo.trim(),
-      password: value.password,
-      idRol: value.idRol!,
+      idsRoles: value.idsRoles,
     };
 
     this.activeModal.close(result);

@@ -1,0 +1,29 @@
+<div class="ui-modal-header">
+  <h2 class="ui-modal-title">{{ title }}</h2>
+  <button
+    type="button"
+    class="btn-close ui-modal-close"
+    aria-label="Cerrar"
+    (click)="cancelar()"
+  ></button>
+</div>
+
+<div class="ui-modal-body ui-confirmation-body">
+  <span class="ui-confirmation-icon feather icon-alert-triangle" aria-hidden="true"></span>
+  <p>{{ message }}</p>
+</div>
+
+<div class="ui-modal-footer">
+  <app-button
+    texto="Cancelar"
+    icon="x"
+    color="danger"
+    (click)="cancelar()"
+  ></app-button>
+  <app-button
+    [texto]="confirmText"
+    [icon]="confirmIcon"
+    color="primary"
+    (click)="confirmar()"
+  ></app-button>
+</div>

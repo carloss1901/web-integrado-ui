@@ -1,0 +1,71 @@
+@use "variables" as *;
+
+.ui-field.is-invalid .ui-checkbox-list {
+  border-color: $cs-danger;
+}
+
+.ui-checkbox-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  padding: 0.45rem;
+  border: 1px solid $cs-border-color;
+  border-radius: 0.45rem;
+  background: $cs-bg-card;
+}
+
+.ui-checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 35px;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.35rem;
+  color: $cs-text-main;
+  font-size: 0.92rem;
+  cursor: pointer;
+
+  &:hover { background: $cs-light; }
+
+  > input[type="checkbox"] {
+    box-sizing: border-box;
+    width: 16px !important;
+    min-width: 16px !important;
+    max-width: 16px !important;
+    height: 16px !important;
+    min-height: 16px !important;
+    max-height: 16px !important;
+    margin: 0;
+    padding: 0 !important;
+    appearance: none;
+    flex: 0 0 16px;
+    aspect-ratio: 1 / 1;
+    border: 1.5px solid $cs-border-color;
+    border-radius: 4px;
+    background: $cs-bg-card;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease,
+      box-shadow 0.15s ease;
+
+    &:hover { border-color: $cs-primary; }
+    &:focus, &:focus-visible { outline: none; box-shadow: none; }
+    &:checked { position: relative; border-color: $cs-primary; background: $cs-primary; }
+
+    &:checked::after {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 4px;
+      height: 8px;
+      border: solid $cs-bg-card;
+      border-width: 0 2px 2px 0;
+      content: "";
+      transform: translate(-50%, -60%) rotate(45deg);
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  .ui-checkbox-list { grid-template-columns: 1fr; }
+}

@@ -6,7 +6,7 @@ import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { finalize } from "rxjs";
 
 import { MaestroResponse } from "../../../../api/api/models/maestro-response";
-import { UsuarioProjection } from "../../../../api/api/models/usuario-projection";
+import { UsuarioListadoResponse } from "../../../../api/api/models/usuario-listado-response";
 import {
   ComunesControllerService,
   UsuarioControllerService,
@@ -19,6 +19,10 @@ import {
 } from "../../components/user-modal/user-modal.component";
 import { TopbarComponent } from "../../../../shared/components/topbar/topbar.component";
 import { AppButtonComponent } from "../../../../shared/components/app-button/app-button.component";
+import { AlertService } from "../../../../core/services/alert.service";
+import { ScreenLoadingService } from "../../../../core/services/screen-loading.service";
+import { ConfirmationModalComponent } from "../../../../shared/components/confirmation-modal/confirmation-modal.component";
+import { UserViewModalComponent } from "../../components/user-view-modal/user-view-modal.component";
 import {
   PaginationChange,
   TableFooterPaginationComponent,
@@ -38,11 +42,12 @@ import {
   templateUrl: "./usuarios.component.html",
 })
 export class UsuariosComponent implements OnInit {
-  usuarios: UsuarioProjection[] = [];
+  usuarios: UsuarioListadoResponse[] = [];
   roles: MaestroResponse[] = [];
-  loading = false;
   errorMessage = "";
-  successMessage = "";
+  private rolesCargados = false;
+  private cargandoRoles = false;
+  loading = false;
   page = 1;
   pageSize = 5;
   readonly pageSizeOptions = [5, 10, 15];
@@ -66,10 +71,11 @@ export class UsuariosComponent implements OnInit {
     private readonly usuarioApi: UsuarioControllerService,
     private readonly comunesApi: ComunesControllerService,
     private readonly modalService: NgbModal,
+    private readonly alertService: AlertService,
+    private readonly screenLoadingService: ScreenLoadingService,
   ) {}
 
   ngOnInit(): void {
-    this.cargarRoles();
     this.cargarUsuarios();
   }
 
@@ -87,14 +93,50 @@ export class UsuariosComponent implements OnInit {
   }
 
   abrirCrear(): void {
-    this.abrirModal(null);
+    this.abrirModalConRoles(null);
   }
 
-  abrirEditar(usuario: UsuarioProjection): void {
-    this.abrirModal(usuario);
+  abrirEditar(usuario: UsuarioListadoResponse): void {
+    this.abrirModalConRoles(usuario);
   }
 
-  private abrirModal(usuario: UsuarioProjection | null): void {
+  abrirVisualizar(usuario: UsuarioListadoResponse): void {
+    const modalRef = this.modalService.open(UserViewModalComponent, {
+      centered: true,
+      size: "lg",
+      scrollable: true,
+    });
+    modalRef.componentInstance.usuario = usuario;
+  }
+
+  private abrirModalConRoles(usuario: UsuarioListadoResponse | null): void {
+    if (this.rolesCargados) {
+      this.abrirModal(usuario, false);
+      return;
+    }
+
+    if (this.cargandoRoles) return;
+
+    this.cargandoRoles = true;
+    const modalRef = this.abrirModal(usuario, true);
+    this.comunesApi
+      .listarRoles()
+      .pipe(finalize(() => (this.cargandoRoles = false)))
+      .subscribe({
+        next: (roles) => {
+          this.roles = roles ?? [];
+          this.rolesCargados = true;
+          modalRef.componentInstance.roles = this.roles;
+          modalRef.componentInstance.cargandoRoles = false;
+        },
+        error: (error: HttpErrorResponse) => {
+          modalRef.componentInstance.cargandoRoles = false;
+          this.mostrarError(error);
+        },
+      });
+  }
+
+  private abrirModal(usuario: UsuarioListadoResponse | null, cargandoRoles: boolean) {
     const modalRef = this.modalService.open(UserModalComponent, {
       backdrop: "static",
       keyboard: false,
@@ -104,41 +146,46 @@ export class UsuariosComponent implements OnInit {
     });
     modalRef.componentInstance.roles = this.roles;
     modalRef.componentInstance.usuario = usuario;
+    modalRef.componentInstance.cargandoRoles = cargandoRoles;
     modalRef.result
       .then((result: UserModalResult) => this.guardar(result))
       .catch(() => undefined);
+    return modalRef;
   }
 
   private guardar(value: UserModalResult): void {
-    this.errorMessage = "";
+    this.screenLoadingService.show();
     const request =
       value.modo === "editar"
         ? this.usuarioApi.actualizarUsuario({
             body: {
               idUsuario: value.idUsuario ?? 0,
               nombres: value.nombres,
-              apellidos: value.apellidos,
+              apePaterno: value.apePaterno,
+              apeMaterno: value.apeMaterno,
               correo: value.correo,
-              idsRoles: [value.idRol],
+              idsRoles: value.idsRoles,
             },
           })
         : this.usuarioApi.registrarUsuario({
             body: {
               usuario: value.usuario,
               nombres: value.nombres,
-              apellidos: value.apellidos,
+              apePaterno: value.apePaterno,
+              apeMaterno: value.apeMaterno,
               correo: value.correo,
-              password: value.password ?? "",
-              idsRoles: [value.idRol],
+              password: "campus360",
+              idsRoles: value.idsRoles,
             },
           });
 
-    request.subscribe({
+    request.pipe(finalize(() => this.screenLoadingService.hide())).subscribe({
       next: () => {
-        this.successMessage =
+        this.alertService.success(
           value.modo === "editar"
             ? "Usuario actualizado correctamente."
-            : "Usuario registrado correctamente.";
+            : "Usuario registrado correctamente.",
+        );
         this.page = 1;
         this.cargarUsuarios();
       },
@@ -146,25 +193,74 @@ export class UsuariosComponent implements OnInit {
     });
   }
 
-  eliminar(usuario: UsuarioProjection): void {
-    if (
-      !usuario.idUsuario ||
-      !window.confirm(
-        `¿Deseas eliminar a ${usuario.usuario ?? "este usuario"}?`,
-      )
-    )
-      return;
+  eliminar(usuario: UsuarioListadoResponse): void {
+    if (!usuario.idUsuario) return;
+
+    const modalRef = this.modalService.open(ConfirmationModalComponent, {
+      centered: true,
+      size: "md",
+      backdrop: "static",
+    });
+    modalRef.componentInstance.title = "Confirmación de eliminación";
+    modalRef.componentInstance.confirmText = "Eliminar";
+    modalRef.componentInstance.confirmIcon = "trash-2";
+    modalRef.componentInstance.message =
+      `¿Deseas eliminar al usuario ${usuario.usuario ?? "seleccionado"}?`;
+
+    modalRef.result
+      .then((confirmado: boolean) => {
+        if (confirmado) this.confirmarEliminacion(usuario);
+      })
+      .catch(() => undefined);
+  }
+
+  private confirmarEliminacion(usuario: UsuarioListadoResponse): void {
     this.errorMessage = "";
+    this.screenLoadingService.show();
     this.usuarioApi
-      .eliminarUsuario({ idUsuario: usuario.idUsuario })
+      .eliminarUsuario({ idUsuario: usuario.idUsuario! })
+      .pipe(finalize(() => this.screenLoadingService.hide()))
       .subscribe({
         next: () => {
-          this.successMessage = "Usuario eliminado correctamente.";
+          this.alertService.success("Usuario eliminado correctamente.");
           if (this.usuarios.length === 1 && this.page > 1) this.page -= 1;
           this.cargarUsuarios();
         },
         error: (error: HttpErrorResponse) => this.mostrarError(error),
       });
+  }
+
+  reactivar(usuario: UsuarioListadoResponse): void {
+    if (!usuario.idUsuario) return;
+
+    const modalRef = this.modalService.open(ConfirmationModalComponent, {
+      centered: true,
+      size: "md",
+      backdrop: "static",
+    });
+    modalRef.componentInstance.title = "Confirmación de reactivación";
+    modalRef.componentInstance.message =
+      `¿Deseas reactivar al usuario ${usuario.usuario ?? "seleccionado"}?`;
+    modalRef.componentInstance.confirmText = "Reactivar";
+    modalRef.componentInstance.confirmIcon = "refresh-cw";
+
+    modalRef.result
+      .then((confirmado: boolean) => {
+        if (!confirmado) return;
+        this.errorMessage = "";
+        this.screenLoadingService.show();
+        this.usuarioApi
+          .activarUsuario({ idUsuario: usuario.idUsuario! })
+          .pipe(finalize(() => this.screenLoadingService.hide()))
+          .subscribe({
+            next: () => {
+              this.alertService.success("Usuario reactivado correctamente.");
+              this.cargarUsuarios();
+            },
+            error: (error: HttpErrorResponse) => this.mostrarError(error),
+          });
+      })
+      .catch(() => undefined);
   }
 
   cambiarPagina(page: number): void {
@@ -202,16 +298,8 @@ export class UsuariosComponent implements OnInit {
     this.cargarUsuarios();
   }
 
-  private cargarRoles(): void {
-    this.comunesApi.listarRoles().subscribe({
-      next: (roles) => (this.roles = roles ?? []),
-      error: (error: HttpErrorResponse) => this.mostrarError(error),
-    });
-  }
-
   private cargarUsuarios(): void {
     this.loading = true;
-    this.errorMessage = "";
     const filters = this.filterForm.getRawValue();
     const params: Parameters<UsuarioControllerService["listarUsuario"]>[0] = {
       page: this.page,
@@ -236,6 +324,7 @@ export class UsuariosComponent implements OnInit {
 
   private mostrarError(error: HttpErrorResponse): void {
     const body = error.error as { message?: string } | null;
+    this.alertService.error(body?.message ?? "No se pudo completar la operación.");
     this.errorMessage = body?.message ?? "No se pudo completar la operación.";
   }
 }

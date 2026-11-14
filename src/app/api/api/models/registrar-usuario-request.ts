@@ -1,7 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export interface RegistrarUsuarioRequest {
-  apellidos: string;
+  apeMaterno?: string;
+  apePaterno?: string;
   correo: string;
   idsRoles: Array<number>;
   nombres: string;

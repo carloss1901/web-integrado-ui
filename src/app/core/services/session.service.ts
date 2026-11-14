@@ -5,7 +5,8 @@ import { STORAGE_KEYS } from '../constants/storage-keys.constant';
 interface JwtPayload {
   idUsuario?: number;
   nombres?: string;
-  apellidos?: string;
+  apePaterno?: string;
+  apeMaterno?: string;
   roles?: string[];
   sub?: string;
 }
@@ -32,7 +33,9 @@ export class SessionService {
     const payload = this.decodeToken(token);
     const user: User = {
       id: Number(payload.idUsuario ?? 0),
-      name: [payload.nombres, payload.apellidos].filter(Boolean).join(' ') || payload.sub || 'Usuario',
+      name: [payload.nombres, payload.apePaterno, payload.apeMaterno]
+        .filter(Boolean)
+        .join(' ') || payload.sub || 'Usuario',
       role: Array.isArray(payload.roles) ? payload.roles.join(', ') : 'Sin rol'
     };
     localStorage.removeItem(this.legacyTokenKey);

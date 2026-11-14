@@ -226,11 +226,27 @@ app-button .btn,
     background: $nl-blue-light;
   }
 
+  &--view:hover {
+    border-color: #4f46a5;
+    color: #4f46a5;
+    background: #e8e7fa;
+  }
+
   &--delete:hover {
     border-color: $cs-danger;
     color: $cs-danger;
     background: $nl-red-ligth;
   }
+
+  &--reactivate:hover {
+    border-color: $cs-success;
+    color: $cs-success;
+    background: $nl-green-light;
+  }
+}
+
+.ui-icon-button--reactivate {
+  color: $cs-text-muted;
 }
 
 .ui-table-actions {

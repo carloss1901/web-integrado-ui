@@ -125,6 +125,10 @@
   white-space: nowrap;
 }
 
+.ui-role-badge + .ui-role-badge {
+  margin-left: 0.35rem;
+}
+
 .ui-role-administrador {
   color: #4f46a5;
   background: #e8e7fa;
@@ -160,7 +164,7 @@
 }
 
 .ui-status-badge.is-inactive {
-  color: #b45309;
+  color: #dc2626;
 }
 .ui-status-dot {
   width: 8px;
@@ -169,5 +173,5 @@
   background: #14b8a6;
 }
 .is-inactive .ui-status-dot {
-  background: #f59e0b;
+  background: #ef4444;
 }

@@ -19,20 +19,38 @@
 	}
 
 	.ng-select {
-		.ng-select-container {
-			font-size: 14px;
-			height: 32px !important;
-			min-height: 32px;
-			color: $nl-black;
-			border: 1px solid $nl-grey-20;
-			.ng-arrow {
-				border-color: $nl-grey-30 transparent transparent;
+		position: relative;
+
+		&.ng-select-single:not(.ng-select-searchable) {
+			.ng-select-container .ng-value-container .ng-input {
+				display: none !important;
 			}
 		}
-		&.ng-select-opened .ng-arrow {
-			border-color: transparent transparent $nl-grey-30;
+
+		.ng-select-container {
+			font-size: 0.92rem;
+			height: 35px !important;
+			min-height: 35px;
+			color: $nl-black;
+			border: 1px solid $nl-grey-20;
+			background-repeat: no-repeat;
+			background-position: right 0.75rem center;
+			background-size: 12px 12px;
+			background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2364758B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M2 5l6 6 6-6'/></svg>");
+		}
+		.ng-arrow {
+			display: none !important;
+		}
+		&.ng-select-opened .ng-select-container {
+			background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%2364758B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M2 11l6-6 6 6'/></svg>");
 		}
 		.ng-dropdown-panel {
+			left: 0 !important;
+			right: auto;
+			top: 100% !important;
+			width: 100% !important;
+			margin-top: 0;
+			transform: none;
 			box-shadow: $box-shadow-lg;
 			.ng-dropdown-panel-items {
 				max-height: 222px;
@@ -47,9 +65,10 @@
 				}
 			}
 		}
-		&.ng-select-focused:not(.ng-select-opened) > .ng-select-container {
-			border: 1px solid $nl-focus;
-			box-shadow: 0 0 0 3px $nl-blue-light;
+		&.ng-select-focused > .ng-select-container,
+		&.ng-select-opened > .ng-select-container {
+			border-color: $cs-info;
+			box-shadow: 0 0 0 0.18rem rgba($cs-info, 0.12);
 		}
 		&.ng-invalid {
 			.ng-select-container {

@@ -14,39 +14,24 @@
   <div class="ui-modal-body">
     <div class="ui-form-grid">
       <div class="ui-field" [class.is-invalid]="controlInvalido('usuario')">
-        <label for="usuario">Usuario</label>
+        <label class="ui-field-label required" for="usuario">DNI</label>
         <input
           id="usuario"
           type="text"
           formControlName="usuario"
+          [appOnlyNumbers]="8"
+          maxlength="8"
+          inputmode="numeric"
           [placeholder]="placeholders.INGRESAR"
           autocomplete="off"
         />
         @if (controlInvalido("usuario")) {
-          <small>Ingresa un usuario válido.</small>
-        }
-      </div>
-
-      <div class="ui-field" [class.is-invalid]="controlInvalido('idRol')">
-        <label for="idRol">Rol</label>
-        <ng-select
-          inputId="idRol"
-          [items]="roles"
-          bindLabel="descripcion"
-          bindValue="maestroId"
-          [placeholder]="placeholders.SELECCIONAR"
-          [clearable]="false"
-          [searchable]="true"
-          [class.is-invalid]="controlInvalido('idRol')"
-          formControlName="idRol"
-        ></ng-select>
-        @if (controlInvalido("idRol")) {
-          <small>Selecciona un rol.</small>
+          <small>Ingresa un DNI válido de hasta 8 dígitos.</small>
         }
       </div>
 
       <div class="ui-field" [class.is-invalid]="controlInvalido('nombres')">
-        <label for="nombres">Nombres</label>
+        <label class="ui-field-label required" for="nombres">Nombres</label>
         <input
           id="nombres"
           type="text"
@@ -58,24 +43,37 @@
         }
       </div>
 
-      <div class="ui-field" [class.is-invalid]="controlInvalido('apellidos')">
-        <label for="apellidos">Apellidos</label>
+      <div class="ui-field" [class.is-invalid]="controlInvalido('apePaterno')">
+        <label class="ui-field-label required" for="apePaterno">Apellido paterno</label>
         <input
-          id="apellidos"
+          id="apePaterno"
           type="text"
-          formControlName="apellidos"
+          formControlName="apePaterno"
           [placeholder]="placeholders.INGRESAR"
         />
-        @if (controlInvalido("apellidos")) {
-          <small>Los apellidos son obligatorios.</small>
+        @if (controlInvalido("apePaterno")) {
+          <small>El apellido paterno es obligatorio.</small>
+        }
+      </div>
+
+      <div class="ui-field" [class.is-invalid]="controlInvalido('apeMaterno')">
+        <label class="ui-field-label" for="apeMaterno">Apellido materno</label>
+        <input
+          id="apeMaterno"
+          type="text"
+          formControlName="apeMaterno"
+          [placeholder]="placeholders.INGRESAR"
+        />
+        @if (controlInvalido("apeMaterno")) {
+          <small>El apellido materno no puede superar los 100 caracteres.</small>
         }
       </div>
 
       <div
-        class="ui-field ui-field--full"
+        class="ui-field"
         [class.is-invalid]="controlInvalido('correo')"
       >
-        <label for="correo">Correo electrónico</label>
+        <label class="ui-field-label required" for="correo">Correo electrónico</label>
         <input
           id="correo"
           type="email"
@@ -88,24 +86,31 @@
         }
       </div>
 
-      @if (!modoEdicion) {
-        <div
-          class="ui-field ui-field--full"
-          [class.is-invalid]="controlInvalido('password')"
-        >
-          <label for="password">Contraseña temporal</label>
-          <input
-            id="password"
-            type="password"
-            formControlName="password"
-            [placeholder]="placeholders.INGRESAR"
-            autocomplete="new-password"
-          />
-          @if (controlInvalido("password")) {
-            <small>Debe tener al menos 6 caracteres.</small>
-          }
-        </div>
-      }
+      <div
+        class="ui-field ui-field--full"
+        [class.is-invalid]="controlInvalido('idsRoles')"
+      >
+        <span class="ui-field-label required">Roles</span>
+        @if (cargandoRoles) {
+          <app-loading message="Cargando roles..."></app-loading>
+        } @else {
+          <div class="ui-checkbox-list" role="group" aria-label="Roles">
+            @for (rol of roles; track rol.maestroId) {
+              <label class="ui-checkbox-option">
+                <input
+                  type="checkbox"
+                  [checked]="rolSeleccionado(rol.maestroId!)"
+                  (change)="alternarRol(rol.maestroId!)"
+                />
+                <span>{{ rol.descripcion }}</span>
+              </label>
+            }
+          </div>
+        }
+        @if (controlInvalido("idsRoles")) {
+          <small>Selecciona al menos un rol.</small>
+        }
+      </div>
     </div>
   </div>
 
@@ -121,6 +126,7 @@
       icon="save"
       color="primary"
       type="submit"
+      [disabled]="!formularioValido"
     ></app-button>
   </div>
 </form>

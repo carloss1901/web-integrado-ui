@@ -146,8 +146,14 @@
   }
 
   tbody tr:hover {
-    background: $cs-light;
+    background: transparent;
   }
+
+  .agrihusa & tbody > tr:hover,
+  .agrihusa & tbody > tr:hover > td {
+    background-color: transparent !important;
+  }
+
   strong {
     color: $cs-primary;
   }

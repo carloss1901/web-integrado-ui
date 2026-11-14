@@ -64,6 +64,12 @@
 	}
 
 	.required {
+		&::after {
+			color: #cf2c30;
+			content: " *";
+			display: inline;
+		}
+
 		label::after {
 			color: #cf2c30;
 			content: "*";
@@ -92,4 +98,12 @@
 	.form-control.numeric {
 		text-align: right;
 	}
+}
+
+// Indicador reutilizable para campos obligatorios.
+label.required::after,
+.ui-field-label.required::after {
+	color: #cf2c30;
+	content: " *";
+	display: inline;
 }

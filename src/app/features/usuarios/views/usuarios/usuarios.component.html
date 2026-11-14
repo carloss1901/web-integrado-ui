@@ -6,21 +6,6 @@
   </div>
 
   <div class="frame-layout__body">
-    @if (successMessage) {
-      <div class="alert alert-success alert-dismissible" role="status">
-        {{ successMessage }}
-        <button
-          type="button"
-          class="btn-close"
-          aria-label="Cerrar"
-          (click)="successMessage = ''"
-        ></button>
-      </div>
-    }
-    @if (errorMessage) {
-      <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
-    }
-
     <app-users-filter
       [form]="filterForm"
       [estadoOptions]="estadoOptions"
@@ -48,7 +33,9 @@
         [page]="page"
         [pageSize]="pageSize"
         (edit)="abrirEditar($event)"
+        (view)="abrirVisualizar($event)"
         (delete)="eliminar($event)"
+        (reactivate)="reactivar($event)"
       ></app-users-table>
 
       <app-table-footer-pagination

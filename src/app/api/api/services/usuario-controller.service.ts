@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
 import { ActualizarUsuarioRequest } from '../models/actualizar-usuario-request';
-import { CustomPageUsuarioProjection } from '../models/custom-page-usuario-projection';
+import { CustomPageUsuarioListadoResponse } from '../models/custom-page-usuario-listado-response';
 import { RegistrarUsuarioRequest } from '../models/registrar-usuario-request';
 
 @Injectable({
@@ -74,6 +74,62 @@ export class UsuarioControllerService extends BaseService {
 }> {
 
     return this.actualizarUsuario$Response(params).pipe(
+      map((r: StrictHttpResponse<{
+}>) => r.body as {
+})
+    );
+  }
+
+  /**
+   * Path part for operation activarUsuario
+   */
+  static readonly ActivarUsuarioPath = '/usuario/activar/{idUsuario}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `activarUsuario()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  activarUsuario$Response(params: {
+    idUsuario: number;
+    context?: HttpContext
+  }
+): Observable<StrictHttpResponse<{
+}>> {
+
+    const rb = new RequestBuilder(this.rootUrl, UsuarioControllerService.ActivarUsuarioPath, 'put');
+    if (params) {
+      rb.path('idUsuario', params.idUsuario, {});
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json',
+      context: params?.context
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<{
+        }>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `activarUsuario$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  activarUsuario(params: {
+    idUsuario: number;
+    context?: HttpContext
+  }
+): Observable<{
+}> {
+
+    return this.activarUsuario$Response(params).pipe(
       map((r: StrictHttpResponse<{
 }>) => r.body as {
 })
@@ -213,7 +269,7 @@ export class UsuarioControllerService extends BaseService {
     size?: number;
     context?: HttpContext
   }
-): Observable<StrictHttpResponse<CustomPageUsuarioProjection>> {
+): Observable<StrictHttpResponse<CustomPageUsuarioListadoResponse>> {
 
     const rb = new RequestBuilder(this.rootUrl, UsuarioControllerService.ListarUsuarioPath, 'get');
     if (params) {
@@ -233,7 +289,7 @@ export class UsuarioControllerService extends BaseService {
     })).pipe(
       filter((r: any) => r instanceof HttpResponse),
       map((r: HttpResponse<any>) => {
-        return r as StrictHttpResponse<CustomPageUsuarioProjection>;
+        return r as StrictHttpResponse<CustomPageUsuarioListadoResponse>;
       })
     );
   }
@@ -254,10 +310,10 @@ export class UsuarioControllerService extends BaseService {
     size?: number;
     context?: HttpContext
   }
-): Observable<CustomPageUsuarioProjection> {
+): Observable<CustomPageUsuarioListadoResponse> {
 
     return this.listarUsuario$Response(params).pipe(
-      map((r: StrictHttpResponse<CustomPageUsuarioProjection>) => r.body as CustomPageUsuarioProjection)
+      map((r: StrictHttpResponse<CustomPageUsuarioListadoResponse>) => r.body as CustomPageUsuarioListadoResponse)
     );
   }
 
