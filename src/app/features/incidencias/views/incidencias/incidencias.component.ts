@@ -1,24 +1,28 @@
 import { CommonModule } from "@angular/common";
 import { HttpErrorResponse } from "@angular/common/http";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { catchError, finalize, forkJoin, of } from "rxjs";
+import { catchError, finalize, forkJoin, of, Subscription } from "rxjs";
 import { IncidenciaResponse } from "../../../../api/api/models/incidencia-response";
 import { MaestroResponse } from "../../../../api/api/models/maestro-response";
 import { ComunesControllerService, IncidenciaControllerService } from "../../../../api/api/services";
 import { AlertService } from "../../../../core/services/alert.service";
 import { ScreenLoadingService } from "../../../../core/services/screen-loading.service";
+import { Role } from "../../../../core/constants/role.enum";
+import { SessionService } from "../../../../core/services/session.service";
 import { IncidenciasFilterComponent } from "../../components/incidencias-filter/incidencias-filter.component";
 import { IncidenciasTableComponent } from "../../components/incidencias-table/incidencias-table.component";
-import { IncidenciaViewModalComponent } from "../../components/incidencia-view-modal/incidencia-view-modal.component";
+import { IncidenciaRevisionResult, IncidenciaViewModalComponent } from "../../components/incidencia-view-modal/incidencia-view-modal.component";
 import { IncidenciaModalComponent, IncidenciaModalResult } from "../../components/incidencia-modal/incidencia-modal.component";
+import { IncidenciaAsignarResponsableModalComponent, IncidenciaAsignarResponsableResult } from "../../components/incidencia-asignar-responsable-modal/incidencia-asignar-responsable-modal.component";
 import { TopbarComponent } from "../../../../shared/components/topbar/topbar.component";
 import { AppButtonComponent } from "../../../../shared/components/app-button/app-button.component";
+import { ConfirmationModalComponent } from "../../../../shared/components/confirmation-modal/confirmation-modal.component";
 import { PaginationChange, TableFooterPaginationComponent } from "../../../../shared/components/table-footer-pagination/table-footer-pagination.component";
 
 @Component({ selector: "app-incidencias", standalone: true, imports: [CommonModule, ReactiveFormsModule, TopbarComponent, AppButtonComponent, TableFooterPaginationComponent, IncidenciasFilterComponent, IncidenciasTableComponent, IncidenciaModalComponent, IncidenciaViewModalComponent], templateUrl: "./incidencias.component.html" })
-export class IncidenciasComponent implements OnInit {
+export class IncidenciasComponent implements OnInit, OnDestroy {
   private incidenciasTodas: IncidenciaResponse[] = [];
   incidencias: IncidenciaResponse[] = [];
   estados: MaestroResponse[] = [];
@@ -32,15 +36,57 @@ export class IncidenciasComponent implements OnInit {
   totalItems = 0;
   readonly pageSizeOptions = [5, 10, 15];
   readonly filterForm = this.formBuilder.group({ codigo: [""], titulo: [""], reportante: [""], estado: [null as string | null], categoria: [null as string | null], prioridad: [null as string | null], severidad: [null as string | null], ubicacion: [null as string | null] });
+  private roleSubscription?: Subscription;
 
-  constructor(private readonly formBuilder: FormBuilder, private readonly incidenciaApi: IncidenciaControllerService, private readonly comunesApi: ComunesControllerService, private readonly modalService: NgbModal, private readonly alertService: AlertService, private readonly screenLoadingService: ScreenLoadingService) {}
-  ngOnInit(): void { this.cargarCatalogos(); this.cargarIncidencias(); }
+  constructor(private readonly formBuilder: FormBuilder, private readonly incidenciaApi: IncidenciaControllerService, private readonly comunesApi: ComunesControllerService, private readonly modalService: NgbModal, private readonly alertService: AlertService, private readonly screenLoadingService: ScreenLoadingService, private readonly session: SessionService) {}
+  get puedeRegistrarIncidencia(): boolean {
+    const idRol = this.session.selectedRole?.id;
+    return idRol === Role.REPORTANTE || idRol === Role.ADMINISTRADOR;
+  }
+  get puedeRevisarIncidencia(): boolean { return this.session.selectedRole?.id === Role.OPERADOR_MESA_CONTROL; }
+  get esResponsableAtencion(): boolean { return this.session.selectedRole?.id === Role.RESPONSABLE_ATENCION; }
+  ngOnInit(): void {
+    this.roleSubscription = this.session.selectedRole$.subscribe((role) => {
+      if (role) {
+        this.cargarCatalogos();
+        this.cargarIncidencias();
+      }
+    });
+  }
+  ngOnDestroy(): void { this.roleSubscription?.unsubscribe(); }
   abrirVisualizar(incidencia: IncidenciaResponse): void { const modalRef = this.modalService.open(IncidenciaViewModalComponent, { centered: true, size: "lg", scrollable: true }); modalRef.componentInstance.incidencia = incidencia; }
+  abrirRevision(incidencia: IncidenciaResponse): void {
+    const modalRef = this.modalService.open(IncidenciaViewModalComponent, { centered: true, size: "lg", backdrop: "static", keyboard: false });
+    modalRef.componentInstance.incidencia = incidencia;
+    modalRef.componentInstance.modoRevision = true;
+    modalRef.componentInstance.severidades = this.severidades;
+    modalRef.result.then((value: IncidenciaRevisionResult) => this.clasificarIncidencia(value)).catch(() => undefined);
+  }
   abrirRegistrar(): void {
     const modalRef = this.modalService.open(IncidenciaModalComponent, { centered: true, size: "lg", backdrop: "static", keyboard: false });
     modalRef.componentInstance.categorias = this.categorias;
     modalRef.componentInstance.ubicaciones = this.ubicaciones;
     modalRef.result.then((value: IncidenciaModalResult) => this.guardarIncidencia(value)).catch(() => undefined);
+  }
+  abrirAsignarResponsable(incidencia: IncidenciaResponse): void {
+    const modalRef = this.modalService.open(IncidenciaAsignarResponsableModalComponent, { centered: true, size: "lg", backdrop: "static", keyboard: false });
+    modalRef.componentInstance.incidencia = incidencia;
+    modalRef.result.then((value: IncidenciaAsignarResponsableResult) => this.asignarResponsable(value)).catch(() => undefined);
+  }
+  iniciarAtencion(incidencia: IncidenciaResponse): void {
+    if (incidencia.idIncidencia === undefined) return;
+    const modalRef = this.modalService.open(ConfirmationModalComponent, {
+      centered: true,
+      size: "md",
+      backdrop: "static",
+    });
+    modalRef.componentInstance.title = "Confirmar inicio de atención";
+    modalRef.componentInstance.message = `¿Deseas iniciar la atención de la incidencia ${incidencia.codigo ?? "seleccionada"}?`;
+    modalRef.componentInstance.confirmText = "Iniciar atención";
+    modalRef.componentInstance.confirmIcon = "play";
+    modalRef.result.then((confirmado: boolean) => {
+      if (confirmado) this.confirmarInicioAtencion(incidencia.idIncidencia!);
+    }).catch(() => undefined);
   }
   aplicarFiltros(): void { this.page = 1; this.aplicarFiltrado(); }
   limpiarFiltros(): void { this.filterForm.reset({ codigo: "", titulo: "", reportante: "", estado: null, categoria: null, prioridad: null, severidad: null, ubicacion: null }); this.page = 1; this.aplicarFiltrado(); }
@@ -48,7 +94,10 @@ export class IncidenciasComponent implements OnInit {
 
   private cargarIncidencias(): void {
     this.loading = true;
-    this.incidenciaApi.listarIncidencias().pipe(finalize(() => (this.loading = false))).subscribe({ next: (response) => { this.incidenciasTodas = response ?? []; this.aplicarFiltrado(); }, error: (error: HttpErrorResponse) => this.mostrarError(error) });
+    const solicitud = this.esResponsableAtencion
+      ? this.incidenciaApi.listarMisIncidenciasAsignadas()
+      : this.incidenciaApi.listarIncidencias();
+    solicitud.pipe(finalize(() => (this.loading = false))).subscribe({ next: (response) => { this.incidenciasTodas = response ?? []; this.aplicarFiltrado(); }, error: (error: HttpErrorResponse) => this.mostrarError(error) });
   }
   private cargarCatalogos(): void {
     forkJoin({
@@ -73,6 +122,27 @@ export class IncidenciasComponent implements OnInit {
         this.page = 1;
         this.cargarIncidencias();
       },
+      error: (error: HttpErrorResponse) => this.mostrarError(error),
+    });
+  }
+  private clasificarIncidencia(value: IncidenciaRevisionResult): void {
+    this.screenLoadingService.show();
+    this.incidenciaApi.clasificarIncidencia({ body: value }).pipe(finalize(() => this.screenLoadingService.hide())).subscribe({
+      next: () => { this.alertService.success("Incidencia clasificada correctamente."); this.cargarIncidencias(); },
+      error: (error: HttpErrorResponse) => this.mostrarError(error),
+    });
+  }
+  private asignarResponsable(value: IncidenciaAsignarResponsableResult): void {
+    this.screenLoadingService.show();
+    this.incidenciaApi.asignarResponsable({ body: value }).pipe(finalize(() => this.screenLoadingService.hide())).subscribe({
+      next: () => { this.alertService.success("Responsable asignado correctamente."); this.cargarIncidencias(); },
+      error: (error: HttpErrorResponse) => this.mostrarError(error),
+    });
+  }
+  private confirmarInicioAtencion(idIncidencia: number): void {
+    this.screenLoadingService.show();
+    this.incidenciaApi.iniciarAtencion({ body: { idIncidencia } }).pipe(finalize(() => this.screenLoadingService.hide())).subscribe({
+      next: () => { this.alertService.success("La atención de la incidencia se inició correctamente."); this.cargarIncidencias(); },
       error: (error: HttpErrorResponse) => this.mostrarError(error),
     });
   }

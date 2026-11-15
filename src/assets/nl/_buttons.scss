@@ -232,6 +232,18 @@ app-button .btn,
     background: #e8e7fa;
   }
 
+  &--assign:hover {
+    border-color: $cs-success;
+    color: $cs-success;
+    background: $nl-green-light;
+  }
+
+  &--start:hover {
+    border-color: $cs-success;
+    color: $cs-success;
+    background: $nl-green-light;
+  }
+
   &--delete:hover {
     border-color: $cs-danger;
     color: $cs-danger;

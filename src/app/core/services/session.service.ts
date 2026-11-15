@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, distinctUntilChanged } from 'rxjs';
 import { User } from '../models/user.model';
 import { STORAGE_KEYS } from '../constants/storage-keys.constant';
 
@@ -21,6 +22,14 @@ export interface SessionRole {
 export class SessionService {
   private readonly fallbackUser: User = { id: 0, name: 'Usuario', role: 'Sin rol' };
   private readonly legacyTokenKey = 'web-integrado.token';
+  private readonly selectedRoleSubject = new BehaviorSubject<SessionRole | null>(null);
+  readonly selectedRole$ = this.selectedRoleSubject.pipe(
+    distinctUntilChanged((previous, current) => previous?.id === current?.id),
+  );
+
+  constructor() {
+    this.selectedRoleSubject.next(this.selectedRole);
+  }
 
   get token(): string | null {
     return localStorage.getItem(STORAGE_KEYS.token);
@@ -58,6 +67,7 @@ export class SessionService {
     localStorage.removeItem(this.legacyTokenKey);
     localStorage.setItem(STORAGE_KEYS.token, token);
     localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(user));
+    this.selectedRoleSubject.next(this.selectedRole);
   }
 
   clearSession(): void {
@@ -65,6 +75,7 @@ export class SessionService {
     localStorage.removeItem(STORAGE_KEYS.token);
     localStorage.removeItem(STORAGE_KEYS.user);
     sessionStorage.removeItem(STORAGE_KEYS.user);
+    this.selectedRoleSubject.next(null);
   }
 
   private decodeToken(token: string): JwtPayload {

@@ -15,6 +15,7 @@ export { CustomPageUsuarioListadoResponse } from './models/custom-page-usuario-l
 export { CustomPageable } from './models/custom-pageable';
 export { MaestroResponse } from './models/maestro-response';
 export { UsuarioListadoResponse } from './models/usuario-listado-response';
+export { ResponsableResponse } from './models/responsable-response';
 export { CustomPageIncidenciaHistorialResponse } from './models/custom-page-incidencia-historial-response';
 export { IncidenciaHistorialResponse } from './models/incidencia-historial-response';
 export { CustomPageIncidenciaEvidenciaResponse } from './models/custom-page-incidencia-evidencia-response';

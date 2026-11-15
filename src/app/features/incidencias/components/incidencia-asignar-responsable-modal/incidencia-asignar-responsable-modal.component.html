@@ -1,0 +1,32 @@
+<div class="ui-modal-header">
+  <h2 class="ui-modal-title">Asignar responsable</h2>
+  <button type="button" class="btn-close ui-modal-close" aria-label="Cerrar" (click)="cerrar()"></button>
+</div>
+
+<div class="ui-modal-body">
+  <div class="ui-view-grid">
+    <div class="ui-view-item"><span class="ui-field-label">Código</span><span class="ui-view-value">{{ incidencia.codigo || "-" }}</span></div>
+    <div class="ui-view-item"><span class="ui-field-label">Estado</span><span class="ui-view-value">{{ incidencia.estado || "-" }}</span></div>
+    <div class="ui-view-item ui-view-item--full"><span class="ui-field-label">Título</span><span class="ui-view-value">{{ incidencia.titulo || "-" }}</span></div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()">
+    <div class="ui-form-grid">
+      @if (loading) {
+        <div class="ui-field ui-field--full"><app-loading message="Cargando responsables..."></app-loading></div>
+      } @else {
+        <div class="ui-field ui-field--full" [class.is-invalid]="controlInvalido">
+          <label class="ui-field-label required" for="idResponsable">Responsable de atención</label>
+          <ng-select inputId="idResponsable" [items]="responsables" bindLabel="nombre" bindValue="id" [clearable]="false" [searchable]="true" [placeholder]="placeholders.SELECCIONAR" formControlName="idResponsable"></ng-select>
+          @if (!responsables.length) { <small>No hay responsables de atención activos.</small> }
+          @if (controlInvalido) { <small>Selecciona un responsable de atención.</small> }
+        </div>
+      }
+    </div>
+  </form>
+</div>
+
+<div class="ui-modal-footer">
+  <app-button texto="Cancelar" icon="x" color="danger" (click)="cerrar()"></app-button>
+  <app-button texto="Asignar" icon="user-check" color="primary" [disabled]="loading || !responsables.length" (click)="guardar()"></app-button>
+</div>

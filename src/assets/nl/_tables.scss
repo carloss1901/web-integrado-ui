@@ -201,6 +201,14 @@
   overflow-x: auto;
   overflow-y: visible;
 }
+
+// En tablas paginadas el desplazamiento debe ser solo horizontal para que
+// las columnas que inicialmente quedan fuera mantengan su fondo y bordes.
+.ui-data-table-shell--horizontal {
+  max-height: none;
+  overflow-x: auto;
+  overflow-y: visible;
+}
 .ui-data-table thead th {
   position: sticky;
   top: 0;

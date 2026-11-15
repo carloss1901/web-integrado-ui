@@ -10,7 +10,7 @@
             </div>
             <div class="agrihusa-header__title"><span class="link-to-landing">WEB INTEGRADO</span></div>
             <div class="header-combo" *ngIf="!requiresRoleSelection">
-              <div class="header-combo-content"><span class="header-combo-label">ROL ACTUAL</span><ng-select class="header-ng-select" [items]="roles" bindLabel="nombre" bindValue="id" [clearable]="false" [searchable]="false" [ngModel]="selectedRoleId" appendTo="body" (change)="cambiarRol($event)" aria-label="Seleccionar rol"></ng-select></div>
+              <div class="header-combo-content"><span class="header-combo-label">ROL ACTUAL</span><ng-select class="header-ng-select" [items]="roles" bindLabel="nombre" [clearable]="false" [searchable]="false" [ngModel]="rolActual" appendTo="body" (change)="cambiarRol($event)" aria-label="Seleccionar rol"></ng-select></div>
             </div>
           </div>
           <div class="header-container-right">
@@ -55,7 +55,7 @@
             <h1>Selecciona un rol para continuar</h1>
             <p>Elige el perfil con el que deseas trabajar en CampusSeguro 360.</p>
             <div class="role-cards">
-              <button type="button" class="role-card" *ngFor="let role of roles" (click)="seleccionarRol(role.id)">
+              <button type="button" class="role-card" *ngFor="let role of roles" (click)="seleccionarRol(role)">
                 <span class="role-card-icon">♙</span><strong>{{ role.nombre }}</strong><span>Ingresar con este rol →</span>
               </button>
             </div>

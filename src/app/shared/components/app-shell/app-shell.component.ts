@@ -4,7 +4,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { Component } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { SessionService } from '../../../core/services/session.service';
+import { SessionRole, SessionService } from '../../../core/services/session.service';
 import { ScreenLoadingComponent } from '../screen-loading/screen-loading.component';
 import { ScreenLoadingService } from '../../../core/services/screen-loading.service';
 import { finalize } from 'rxjs';
@@ -20,6 +20,8 @@ export class AppShellComponent {
   menuVisible = true;
   grupoAbierto = true;
   requiresRoleSelection = false;
+  roles: SessionRole[] = [];
+  rolActual: SessionRole | null = null;
 
   constructor(
     private readonly router: Router,
@@ -27,6 +29,7 @@ export class AppShellComponent {
     private readonly session: SessionService,
     private readonly loading: ScreenLoadingService
   ) {
+    this.sincronizarRoles();
     this.requiresRoleSelection = !this.session.selectedRole && this.session.availableRoles.length > 0;
   }
 
@@ -34,26 +37,32 @@ export class AppShellComponent {
     return this.session.currentUser;
   }
 
-  get roles() {
-    return this.session.availableRoles;
-  }
-
-  get selectedRoleId(): number | null {
-    return this.session.selectedRole?.id ?? null;
-  }
-
-  seleccionarRol(idRol: number): void {
+  seleccionarRol(role: SessionRole): void {
+    const rolAnterior = this.rolActual;
+    this.rolActual = role;
     this.loading.show();
-    this.authService.selectRole(idRol).pipe(finalize(() => this.loading.hide())).subscribe({
-      next: () => this.requiresRoleSelection = false,
-      error: () => this.requiresRoleSelection = true
+    this.authService.selectRole(role.id).pipe(finalize(() => this.loading.hide())).subscribe({
+      next: () => {
+        this.sincronizarRoles();
+        this.requiresRoleSelection = false;
+      },
+      error: () => {
+        this.rolActual = rolAnterior;
+        this.requiresRoleSelection = !rolAnterior && this.roles.length > 0;
+      }
     });
   }
 
-  cambiarRol(role: { id: number; nombre: string } | null): void {
-    if (role?.id && role.id !== this.selectedRoleId) {
-      this.seleccionarRol(role.id);
+  cambiarRol(role: SessionRole | null): void {
+    if (role && role.id !== this.rolActual?.id) {
+      this.seleccionarRol(role);
     }
+  }
+
+  private sincronizarRoles(): void {
+    this.roles = this.session.availableRoles;
+    const idRolSeleccionado = this.session.selectedRole?.id;
+    this.rolActual = this.roles.find((role) => role.id === idRolSeleccionado) ?? null;
   }
 
   alternarMenu(): void {

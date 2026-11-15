@@ -12,6 +12,7 @@ import { map, filter } from 'rxjs/operators';
 import { ActualizarUsuarioRequest } from '../models/actualizar-usuario-request';
 import { CustomPageUsuarioListadoResponse } from '../models/custom-page-usuario-listado-response';
 import { RegistrarUsuarioRequest } from '../models/registrar-usuario-request';
+import { ResponsableResponse } from '../models/responsable-response';
 
 @Injectable({
   providedIn: 'root',
@@ -314,6 +315,54 @@ export class UsuarioControllerService extends BaseService {
 
     return this.listarUsuario$Response(params).pipe(
       map((r: StrictHttpResponse<CustomPageUsuarioListadoResponse>) => r.body as CustomPageUsuarioListadoResponse)
+    );
+  }
+
+  /**
+   * Path part for operation listarResponsablesActivos
+   */
+  static readonly ListarResponsablesActivosPath = '/usuario/listar-responsables';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `listarResponsablesActivos()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listarResponsablesActivos$Response(params?: {
+    context?: HttpContext
+  }
+): Observable<StrictHttpResponse<Array<ResponsableResponse>>> {
+
+    const rb = new RequestBuilder(this.rootUrl, UsuarioControllerService.ListarResponsablesActivosPath, 'get');
+    if (params) {
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json',
+      context: params?.context
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<Array<ResponsableResponse>>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `listarResponsablesActivos$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listarResponsablesActivos(params?: {
+    context?: HttpContext
+  }
+): Observable<Array<ResponsableResponse>> {
+
+    return this.listarResponsablesActivos$Response(params).pipe(
+      map((r: StrictHttpResponse<Array<ResponsableResponse>>) => r.body as Array<ResponsableResponse>)
     );
   }
 

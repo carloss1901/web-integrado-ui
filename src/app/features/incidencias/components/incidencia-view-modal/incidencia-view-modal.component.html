@@ -1,53 +1,62 @@
 <div class="ui-modal-header">
-  <h2 class="ui-modal-title">Detalle de incidencia</h2>
-  <button type="button" class="btn-close ui-modal-close" aria-label="Cerrar" (click)="activeModal.dismiss()"></button>
+  <h2 class="ui-modal-title">{{ modoRevision ? "Revisar incidencia" : "Detalle de incidencia" }}</h2>
+  <button type="button" class="btn-close ui-modal-close" aria-label="Cerrar" (click)="cerrar()"></button>
 </div>
 
 <div class="ui-modal-body">
-  <div class="ui-view-grid">
-    <div class="ui-view-item">
-      <span class="ui-field-label">Código</span>
-      <span class="ui-view-value">{{ incidencia.codigo || "-" }}</span>
+  @if (modoRevision) {
+    <div class="ui-view-grid">
+      <div class="ui-view-item"><span class="ui-field-label">Código</span><span class="ui-view-value">{{ incidencia.codigo || "-" }}</span></div>
+      <div class="ui-view-item"><span class="ui-field-label">Título</span><span class="ui-view-value">{{ incidencia.titulo || "-" }}</span></div>
     </div>
-    <div class="ui-view-item">
-      <span class="ui-field-label">Estado</span>
-      <span class="ui-view-value">{{ incidencia.estado || "-" }}</span>
+    <form [formGroup]="form" (ngSubmit)="guardarRevision()">
+      <div class="ui-form-grid">
+        <div class="ui-field" [class.is-invalid]="controlInvalido('idSeveridad')">
+          <label class="ui-field-label required" for="revisionSeveridad">Severidad</label>
+          <ng-select inputId="revisionSeveridad" [items]="severidades" bindLabel="descripcion" bindValue="maestroId" [clearable]="false" [searchable]="false" [placeholder]="placeholders.SELECCIONAR" formControlName="idSeveridad"></ng-select>
+          @if (controlInvalido("idSeveridad")) { <small>Selecciona una severidad.</small> }
+        </div>
+        <div class="ui-field" [class.is-invalid]="controlInvalido('impacto')">
+          <label class="ui-field-label required" for="revisionImpacto">Impacto</label>
+          <ng-select inputId="revisionImpacto" [items]="impactos" bindLabel="nombre" bindValue="id" [clearable]="false" [searchable]="false" [placeholder]="placeholders.SELECCIONAR" formControlName="impacto"></ng-select>
+          @if (controlInvalido("impacto")) { <small>Selecciona el impacto.</small> }
+        </div>
+        <div class="ui-field" [class.is-invalid]="controlInvalido('urgencia')">
+          <label class="ui-field-label required" for="revisionUrgencia">Urgencia</label>
+          <ng-select inputId="revisionUrgencia" [items]="urgencias" bindLabel="nombre" bindValue="id" [clearable]="false" [searchable]="false" [placeholder]="placeholders.SELECCIONAR" formControlName="urgencia"></ng-select>
+          @if (controlInvalido("urgencia")) { <small>Selecciona la urgencia.</small> }
+        </div>
+        <div class="ui-field ui-field--hint">
+          <span class="ui-field-label">Reincidencia</span>
+          <span class="ui-view-value">La calcula automáticamente el sistema con la categoría y ubicación de los últimos 30 días.</span>
+        </div>
+      </div>
+    </form>
+  } @else {
+    <div class="ui-view-grid">
+      <div class="ui-view-item"><span class="ui-field-label">Código</span><span class="ui-view-value">{{ incidencia.codigo || "-" }}</span></div>
+      <div class="ui-view-item"><span class="ui-field-label">Estado</span><span class="ui-view-value">{{ incidencia.estado || "-" }}</span></div>
+      <div class="ui-view-item ui-view-item--full"><span class="ui-field-label">Título</span><span class="ui-view-value">{{ incidencia.titulo || "-" }}</span></div>
+      <div class="ui-view-item"><span class="ui-field-label">Reportante</span><span class="ui-view-value">{{ incidencia.reportante || "-" }}</span></div>
+      <div class="ui-view-item"><span class="ui-field-label">Responsable</span><span class="ui-view-value">{{ incidencia.responsable || "-" }}</span></div>
+      <div class="ui-view-item"><span class="ui-field-label">Categoría</span><span class="ui-view-value">{{ incidencia.categoria || "-" }}</span></div>
+      <div class="ui-view-item"><span class="ui-field-label">Ubicación</span><span class="ui-view-value">{{ incidencia.ubicacion || "-" }}</span></div>
+      <div class="ui-view-item"><span class="ui-field-label">Severidad</span><span class="ui-view-value">{{ incidencia.severidad || "-" }}</span></div>
+      <div class="ui-view-item"><span class="ui-field-label">Prioridad</span><span class="ui-view-value">{{ incidencia.prioridad || "-" }}</span></div>
+      <div class="ui-view-item"><span class="ui-field-label">Impacto</span><span class="ui-view-value">{{ incidencia.impacto || "-" }}</span></div>
+      <div class="ui-view-item"><span class="ui-field-label">Urgencia</span><span class="ui-view-value">{{ incidencia.urgencia || "-" }}</span></div>
+      <div class="ui-view-item"><span class="ui-field-label">Reincidencia</span><span class="ui-view-value">{{ incidencia.reincidencia || "-" }}</span></div>
+      <div class="ui-view-item"><span class="ui-field-label">Puntuación</span><span class="ui-view-value">{{ incidencia.puntuacionPrioridad || "-" }}</span></div>
+      <div class="ui-view-item ui-view-item--full"><span class="ui-field-label">Explicación</span><span class="ui-view-value">{{ incidencia.explicacionPrioridad || "-" }}</span></div>
+      <div class="ui-view-item"><span class="ui-field-label">Fecha de registro</span><span class="ui-view-value">{{ incidencia.fechaRegistro || "-" }}</span></div>
+      <div class="ui-view-item"><span class="ui-field-label">Fecha límite</span><span class="ui-view-value">{{ incidencia.fechaLimite || "-" }}</span></div>
     </div>
-    <div class="ui-view-item ui-view-item--full">
-      <span class="ui-field-label">Título</span>
-      <span class="ui-view-value">{{ incidencia.titulo || "-" }}</span>
-    </div>
-    <div class="ui-view-item">
-      <span class="ui-field-label">Reportante</span>
-      <span class="ui-view-value">{{ incidencia.reportante || "-" }}</span>
-    </div>
-    <div class="ui-view-item">
-      <span class="ui-field-label">Responsable</span>
-      <span class="ui-view-value">{{ incidencia.responsable || "-" }}</span>
-    </div>
-    <div class="ui-view-item">
-      <span class="ui-field-label">Categoría</span>
-      <span class="ui-view-value">{{ incidencia.categoria || "-" }}</span>
-    </div>
-    <div class="ui-view-item">
-      <span class="ui-field-label">Ubicación</span>
-      <span class="ui-view-value">{{ incidencia.ubicacion || "-" }}</span>
-    </div>
-    <div class="ui-view-item">
-      <span class="ui-field-label">Severidad</span>
-      <span class="ui-view-value">{{ incidencia.severidad || "-" }}</span>
-    </div>
-    <div class="ui-view-item">
-      <span class="ui-field-label">Prioridad</span>
-      <span class="ui-view-value">{{ incidencia.prioridad || "-" }}</span>
-    </div>
-    <div class="ui-view-item">
-      <span class="ui-field-label">Fecha de registro</span>
-      <span class="ui-view-value">{{ incidencia.fechaRegistro || "-" }}</span>
-    </div>
-    <div class="ui-view-item">
-      <span class="ui-field-label">Fecha límite</span>
-      <span class="ui-view-value">{{ incidencia.fechaLimite || "-" }}</span>
-    </div>
-  </div>
+  }
 </div>
+
+@if (modoRevision) {
+  <div class="ui-modal-footer">
+    <app-button texto="Cancelar" icon="x" color="danger" (click)="cerrar()"></app-button>
+    <app-button texto="Clasificar" icon="save" color="primary" (click)="guardarRevision()"></app-button>
+  </div>
+}

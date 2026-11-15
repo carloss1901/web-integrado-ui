@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { IncidenciaControllerService } from '../../../../api/api/services';
 import { SessionService } from '../../../../core/services/session.service';
 
@@ -10,7 +11,7 @@ import { SessionService } from '../../../../core/services/session.service';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   readonly user = this.session.currentUser;
   loadError = false;
   metrics = [
@@ -18,6 +19,7 @@ export class DashboardComponent implements OnInit {
     { label: 'Pendientes de atención', value: '—', detail: 'Requieren seguimiento', color: 'orange', icon: 'icon-activity' },
     { label: 'Incidencias vencidas', value: '—', detail: 'Fuera del SLA', color: 'green', icon: 'icon-bell' }
   ];
+  private roleSubscription?: Subscription;
 
   constructor(
     private readonly session: SessionService,
@@ -25,6 +27,19 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.roleSubscription = this.session.selectedRole$.subscribe((role) => {
+      if (role) {
+        this.cargarIndicadores();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.roleSubscription?.unsubscribe();
+  }
+
+  private cargarIndicadores(): void {
+    this.loadError = false;
     this.incidenciaApi.obtenerIndicadores().subscribe({
       next: (indicators) => {
         this.metrics = [

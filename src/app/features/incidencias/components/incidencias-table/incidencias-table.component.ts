@@ -10,7 +10,12 @@ export class IncidenciasTableComponent {
   @Input() loading = false;
   @Input() page = 1;
   @Input() pageSize = 5;
+  @Input() puedeRevisar = false;
+  @Input() puedeIniciarAtencion = false;
   @Output() view = new EventEmitter<IncidenciaResponse>();
+  @Output() review = new EventEmitter<IncidenciaResponse>();
+  @Output() assign = new EventEmitter<IncidenciaResponse>();
+  @Output() startAttention = new EventEmitter<IncidenciaResponse>();
   correlativo(index: number): number { return (this.page - 1) * this.pageSize + index + 1; }
   estadoClass(estado?: string): string {
     const value = this.normalizar(estado);
@@ -23,6 +28,9 @@ export class IncidenciasTableComponent {
     if (value.includes("alta") || value.includes("crit")) return "ui-incident-badge ui-incident-badge--high";
     if (value.includes("media")) return "ui-incident-badge ui-incident-badge--medium";
     return "ui-incident-badge ui-incident-badge--low";
+  }
+  esAsignada(incidencia: IncidenciaResponse): boolean {
+    return this.normalizar(incidencia.estado).includes("asign");
   }
   private normalizar(value?: string): string { return (value ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
 }

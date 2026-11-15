@@ -936,6 +936,54 @@ export class IncidenciaControllerService extends BaseService {
   }
 
   /**
+   * Path part for operation listarMisIncidenciasAsignadas
+   */
+  static readonly ListarMisIncidenciasAsignadasPath = '/incidencias/mis-asignadas';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `listarMisIncidenciasAsignadas()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listarMisIncidenciasAsignadas$Response(params?: {
+    context?: HttpContext
+  }
+): Observable<StrictHttpResponse<Array<IncidenciaResponse>>> {
+
+    const rb = new RequestBuilder(this.rootUrl, IncidenciaControllerService.ListarMisIncidenciasAsignadasPath, 'get');
+    if (params) {
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json',
+      context: params?.context
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<Array<IncidenciaResponse>>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `listarMisIncidenciasAsignadas$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listarMisIncidenciasAsignadas(params?: {
+    context?: HttpContext
+  }
+): Observable<Array<IncidenciaResponse>> {
+
+    return this.listarMisIncidenciasAsignadas$Response(params).pipe(
+      map((r: StrictHttpResponse<Array<IncidenciaResponse>>) => r.body as Array<IncidenciaResponse>)
+    );
+  }
+
+  /**
    * Path part for operation listarIncidencias
    */
   static readonly ListarIncidenciasPath = '/incidencias/listar';
