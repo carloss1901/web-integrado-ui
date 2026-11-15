@@ -2,20 +2,24 @@
   <table class="table ui-data-table ui-incidencias-table align-middle mb-0">
     <caption class="visually-hidden">Lista de incidencias</caption>
     <thead>
-      <tr><th>N°</th><th>Código</th><th>Título</th><th>Reportante</th><th>Categoría</th><th>Prioridad</th><th>Estado</th><th class="text-center">Acciones</th></tr>
+      <tr>
+        <th>N°</th><th>Código</th><th>Título</th>
+        @if (mostrarReportante) { <th>Reportante</th> }
+        <th>Categoría</th><th>Prioridad</th><th>Estado</th><th class="text-center">Acciones</th>
+      </tr>
     </thead>
     <tbody>
       @if (loading) {
-        <tr><td colspan="8"><app-loading message="Cargando incidencias..."></app-loading></td></tr>
+        <tr><td [attr.colspan]="mostrarReportante ? 8 : 7"><app-loading message="Cargando incidencias..."></app-loading></td></tr>
       } @else if (!incidencias.length) {
-        <tr><td colspan="8"><app-no-results message="No hay incidencias registradas."></app-no-results></td></tr>
+        <tr><td [attr.colspan]="mostrarReportante ? 8 : 7"><app-no-results message="No hay incidencias registradas."></app-no-results></td></tr>
       } @else {
         @for (incidencia of incidencias; track incidencia.idIncidencia; let index = $index) {
           <tr>
             <td>{{ correlativo(index) }}</td>
             <td><strong>{{ incidencia.codigo || "—" }}</strong></td>
             <td>{{ incidencia.titulo || "—" }}</td>
-            <td>{{ incidencia.reportante || "—" }}</td>
+            @if (mostrarReportante) { <td>{{ incidencia.reportante || "—" }}</td> }
             <td>{{ incidencia.categoria || "—" }}</td>
             <td><span [class]="prioridadClass(incidencia.prioridad)">{{ incidencia.prioridad || "—" }}</span></td>
             <td><span [class]="estadoClass(incidencia.estado)"><span class="ui-status-dot"></span>{{ incidencia.estado || "—" }}</span></td>
@@ -27,6 +31,13 @@
                 }
                 @if (puedeIniciarAtencion && esAsignada(incidencia)) {
                   <button type="button" class="ui-icon-button ui-icon-button--start" title="Iniciar atención" (click)="startAttention.emit(incidencia)"><span class="feather icon-play" aria-hidden="true"></span><span class="visually-hidden">Iniciar atención</span></button>
+                }
+                @if (puedeIniciarAtencion && esEnAtencion(incidencia)) {
+                  <button type="button" class="ui-icon-button ui-icon-button--resolve" title="Resolver incidencia" (click)="resolve.emit(incidencia)"><span class="feather icon-check-circle" aria-hidden="true"></span><span class="visually-hidden">Resolver incidencia</span></button>
+                }
+                @if (puedeCerrar && esResuelta(incidencia)) {
+                  <button type="button" class="ui-icon-button ui-icon-button--reopen" title="Devolver a atención" (click)="reopen.emit(incidencia)"><span class="feather icon-rotate-ccw" aria-hidden="true"></span><span class="visually-hidden">Reabrir incidencia</span></button>
+                  <button type="button" class="ui-icon-button ui-icon-button--close" title="Cerrar incidencia" (click)="close.emit(incidencia)"><span class="feather icon-lock" aria-hidden="true"></span><span class="visually-hidden">Cerrar incidencia</span></button>
                 }
                 <button type="button" class="ui-icon-button ui-icon-button--view" title="Visualizar incidencia" (click)="view.emit(incidencia)"><span class="feather icon-eye" aria-hidden="true"></span><span class="visually-hidden">Visualizar</span></button>
               </div>

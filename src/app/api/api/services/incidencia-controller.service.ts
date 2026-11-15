@@ -21,6 +21,7 @@ import { CustomPageIncidenciaResponse } from '../models/custom-page-incidencia-r
 import { IncidenciaBusquedaResponse } from '../models/incidencia-busqueda-response';
 import { IncidenciaResponse } from '../models/incidencia-response';
 import { IndicadoresIncidenciaResponse } from '../models/indicadores-incidencia-response';
+import { ReabrirIncidenciaRequest } from '../models/reabrir-incidencia-request';
 import { RegistrarAccionCorrectivaRequest } from '../models/registrar-accion-correctiva-request';
 import { RegistrarComentarioRequest } from '../models/registrar-comentario-request';
 import { RegistrarEvidenciaRequest } from '../models/registrar-evidencia-request';
@@ -199,6 +200,62 @@ export class IncidenciaControllerService extends BaseService {
 }> {
 
     return this.registrarIncidencia$Response(params).pipe(
+      map((r: StrictHttpResponse<{
+}>) => r.body as {
+})
+    );
+  }
+
+  /**
+   * Path part for operation reabrirIncidencia
+   */
+  static readonly ReabrirIncidenciaPath = '/incidencias/reabrir';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `reabrirIncidencia()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  reabrirIncidencia$Response(params: {
+    context?: HttpContext
+    body: ReabrirIncidenciaRequest
+  }
+): Observable<StrictHttpResponse<{
+}>> {
+
+    const rb = new RequestBuilder(this.rootUrl, IncidenciaControllerService.ReabrirIncidenciaPath, 'post');
+    if (params) {
+      rb.body(params.body, 'application/json');
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json',
+      context: params?.context
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<{
+        }>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `reabrirIncidencia$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  reabrirIncidencia(params: {
+    context?: HttpContext
+    body: ReabrirIncidenciaRequest
+  }
+): Observable<{
+}> {
+
+    return this.reabrirIncidencia$Response(params).pipe(
       map((r: StrictHttpResponse<{
 }>) => r.body as {
 })
@@ -932,6 +989,54 @@ export class IncidenciaControllerService extends BaseService {
 
     return this.listarIncidenciasVencidas$Response(params).pipe(
       map((r: StrictHttpResponse<CustomPageIncidenciaResponse>) => r.body as CustomPageIncidenciaResponse)
+    );
+  }
+
+  /**
+   * Path part for operation listarMisIncidenciasReportadas
+   */
+  static readonly ListarMisIncidenciasReportadasPath = '/incidencias/mis-reportadas';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `listarMisIncidenciasReportadas()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listarMisIncidenciasReportadas$Response(params?: {
+    context?: HttpContext
+  }
+): Observable<StrictHttpResponse<Array<IncidenciaResponse>>> {
+
+    const rb = new RequestBuilder(this.rootUrl, IncidenciaControllerService.ListarMisIncidenciasReportadasPath, 'get');
+    if (params) {
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json',
+      context: params?.context
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<Array<IncidenciaResponse>>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `listarMisIncidenciasReportadas$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listarMisIncidenciasReportadas(params?: {
+    context?: HttpContext
+  }
+): Observable<Array<IncidenciaResponse>> {
+
+    return this.listarMisIncidenciasReportadas$Response(params).pipe(
+      map((r: StrictHttpResponse<Array<IncidenciaResponse>>) => r.body as Array<IncidenciaResponse>)
     );
   }
 

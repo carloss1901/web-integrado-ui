@@ -88,6 +88,77 @@
   gap: 0.85rem 1rem;
 }
 
+.ui-traceability {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid $cs-border-color;
+
+  h3 { color: $cs-primary; font-size: 1rem; font-weight: 800; margin-bottom: 0.85rem; }
+}
+
+.ui-traceability-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.ui-traceability-section {
+  padding: 0.8rem;
+  border: 1px solid $cs-border-color;
+  border-radius: 0.55rem;
+  background: $cs-bg-card;
+
+  h4 { color: $cs-primary; font-size: 0.82rem; font-weight: 800; margin-bottom: 0.55rem; }
+  p { margin: 0; padding: 0.55rem 0; border-bottom: 1px solid $nl-disabled; font-size: 0.82rem; }
+  p:last-child { border-bottom: 0; padding-bottom: 0; }
+  small, .ui-empty-text { color: $cs-text-muted; }
+}
+
+.ui-traceability-section--history {
+  max-height: 23rem;
+  overflow-y: auto;
+}
+
+.ui-incident-timeline {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 0.85rem minmax(0, 1fr);
+    gap: 0.65rem;
+    padding: 0 0 0.75rem;
+    border-bottom: 1px solid $nl-disabled;
+    font-size: 0.82rem;
+  }
+
+  li:last-child { padding-bottom: 0; border-bottom: 0; }
+  strong { color: $cs-primary; font-size: 0.76rem; }
+  small { color: $cs-text-muted; }
+}
+
+.ui-incident-timeline__marker {
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-top: 0.18rem;
+  border: 2px solid $cs-bg-card;
+  border-radius: 50%;
+  background: $cs-secondary;
+  box-shadow: 0 0 0 1px $cs-border-color;
+}
+
+.ui-incident-timeline .is-registration .ui-incident-timeline__marker { background: $cs-info; }
+.ui-incident-timeline .is-classification .ui-incident-timeline__marker { background: #8b5cf6; }
+.ui-incident-timeline .is-assignment .ui-incident-timeline__marker { background: #0ea5e9; }
+.ui-incident-timeline .is-attention .ui-incident-timeline__marker { background: $cs-warning; }
+.ui-incident-timeline .is-resolution .ui-incident-timeline__marker { background: #22c55e; }
+.ui-incident-timeline .is-closure .ui-incident-timeline__marker { background: $cs-secondary; }
+.ui-incident-timeline .is-reopen .ui-incident-timeline__marker { background: #c026d3; }
+
 .ui-view-item {
   display: flex;
   min-width: 0;
@@ -164,6 +235,12 @@
 .ui-modal-body {
   padding: 1rem;
   background: $cs-light;
+}
+
+.ui-modal-body--scrollable {
+  max-height: calc(100vh - 10rem);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .ui-modal-footer {

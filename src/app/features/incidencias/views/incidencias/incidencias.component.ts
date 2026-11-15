@@ -16,6 +16,8 @@ import { IncidenciasTableComponent } from "../../components/incidencias-table/in
 import { IncidenciaRevisionResult, IncidenciaViewModalComponent } from "../../components/incidencia-view-modal/incidencia-view-modal.component";
 import { IncidenciaModalComponent, IncidenciaModalResult } from "../../components/incidencia-modal/incidencia-modal.component";
 import { IncidenciaAsignarResponsableModalComponent, IncidenciaAsignarResponsableResult } from "../../components/incidencia-asignar-responsable-modal/incidencia-asignar-responsable-modal.component";
+import { IncidenciaResolverModalComponent, IncidenciaResolverResult } from "../../components/incidencia-resolver-modal/incidencia-resolver-modal.component";
+import { IncidenciaReabrirModalComponent, IncidenciaReabrirResult } from "../../components/incidencia-reabrir-modal/incidencia-reabrir-modal.component";
 import { TopbarComponent } from "../../../../shared/components/topbar/topbar.component";
 import { AppButtonComponent } from "../../../../shared/components/app-button/app-button.component";
 import { ConfirmationModalComponent } from "../../../../shared/components/confirmation-modal/confirmation-modal.component";
@@ -44,7 +46,9 @@ export class IncidenciasComponent implements OnInit, OnDestroy {
     return idRol === Role.REPORTANTE || idRol === Role.ADMINISTRADOR;
   }
   get puedeRevisarIncidencia(): boolean { return this.session.selectedRole?.id === Role.OPERADOR_MESA_CONTROL; }
+  get esReportante(): boolean { return this.session.selectedRole?.id === Role.REPORTANTE; }
   get esResponsableAtencion(): boolean { return this.session.selectedRole?.id === Role.RESPONSABLE_ATENCION; }
+  get esSupervisor(): boolean { return this.session.selectedRole?.id === Role.SUPERVISOR; }
   ngOnInit(): void {
     this.roleSubscription = this.session.selectedRole$.subscribe((role) => {
       if (role) {
@@ -88,15 +92,52 @@ export class IncidenciasComponent implements OnInit, OnDestroy {
       if (confirmado) this.confirmarInicioAtencion(incidencia.idIncidencia!);
     }).catch(() => undefined);
   }
+  resolverIncidencia(incidencia: IncidenciaResponse): void {
+    if (incidencia.idIncidencia === undefined) return;
+    const modalRef = this.modalService.open(IncidenciaResolverModalComponent, {
+      centered: true,
+      size: "lg",
+      backdrop: "static",
+      keyboard: false,
+    });
+    modalRef.componentInstance.incidencia = incidencia;
+    modalRef.result.then((value: IncidenciaResolverResult) => {
+      this.confirmarResolucion(incidencia.idIncidencia!, value.descripcionResolucion);
+    }).catch(() => undefined);
+  }
+  cerrarIncidencia(incidencia: IncidenciaResponse): void {
+    if (incidencia.idIncidencia === undefined) return;
+    const modalRef = this.modalService.open(ConfirmationModalComponent, {
+      centered: true,
+      size: "md",
+      backdrop: "static",
+    });
+    modalRef.componentInstance.title = "Confirmar cierre";
+    modalRef.componentInstance.message = `¿Confirmas el cierre definitivo de la incidencia ${incidencia.codigo ?? "seleccionada"}?`;
+    modalRef.componentInstance.confirmText = "Cerrar incidencia";
+    modalRef.componentInstance.confirmIcon = "lock";
+    modalRef.result.then((confirmado: boolean) => {
+      if (confirmado) this.confirmarCierre(incidencia.idIncidencia!);
+    }).catch(() => undefined);
+  }
+  reabrirIncidencia(incidencia: IncidenciaResponse): void {
+    if (incidencia.idIncidencia === undefined) return;
+    const modalRef = this.modalService.open(IncidenciaReabrirModalComponent, { centered: true, size: "lg", backdrop: "static", keyboard: false });
+    modalRef.componentInstance.incidencia = incidencia;
+    modalRef.result.then((value: IncidenciaReabrirResult) => this.confirmarReapertura(incidencia.idIncidencia!, value.observacion)).catch(() => undefined);
+  }
   aplicarFiltros(): void { this.page = 1; this.aplicarFiltrado(); }
   limpiarFiltros(): void { this.filterForm.reset({ codigo: "", titulo: "", reportante: "", estado: null, categoria: null, prioridad: null, severidad: null, ubicacion: null }); this.page = 1; this.aplicarFiltrado(); }
   onChangePaginate(event: PaginationChange): void { this.page = event.page; this.pageSize = event.pageSize; this.aplicarFiltrado(); }
 
   private cargarIncidencias(): void {
     this.loading = true;
-    const solicitud = this.esResponsableAtencion
-      ? this.incidenciaApi.listarMisIncidenciasAsignadas()
-      : this.incidenciaApi.listarIncidencias();
+    const idRol = this.session.selectedRole?.id;
+    const solicitud = idRol === Role.REPORTANTE
+      ? this.incidenciaApi.listarMisIncidenciasReportadas()
+      : idRol === Role.RESPONSABLE_ATENCION
+        ? this.incidenciaApi.listarMisIncidenciasAsignadas()
+        : this.incidenciaApi.listarIncidencias();
     solicitud.pipe(finalize(() => (this.loading = false))).subscribe({ next: (response) => { this.incidenciasTodas = response ?? []; this.aplicarFiltrado(); }, error: (error: HttpErrorResponse) => this.mostrarError(error) });
   }
   private cargarCatalogos(): void {
@@ -143,6 +184,27 @@ export class IncidenciasComponent implements OnInit, OnDestroy {
     this.screenLoadingService.show();
     this.incidenciaApi.iniciarAtencion({ body: { idIncidencia } }).pipe(finalize(() => this.screenLoadingService.hide())).subscribe({
       next: () => { this.alertService.success("La atención de la incidencia se inició correctamente."); this.cargarIncidencias(); },
+      error: (error: HttpErrorResponse) => this.mostrarError(error),
+    });
+  }
+  private confirmarResolucion(idIncidencia: number, descripcionResolucion: string): void {
+    this.screenLoadingService.show();
+    this.incidenciaApi.resolverIncidencia({ body: { idIncidencia, descripcionResolucion } }).pipe(finalize(() => this.screenLoadingService.hide())).subscribe({
+      next: () => { this.alertService.success("La incidencia se marcó como resuelta correctamente."); this.cargarIncidencias(); },
+      error: (error: HttpErrorResponse) => this.mostrarError(error),
+    });
+  }
+  private confirmarCierre(idIncidencia: number): void {
+    this.screenLoadingService.show();
+    this.incidenciaApi.cerrarIncidencia({ body: { idIncidencia } }).pipe(finalize(() => this.screenLoadingService.hide())).subscribe({
+      next: () => { this.alertService.success("La incidencia se cerró correctamente."); this.cargarIncidencias(); },
+      error: (error: HttpErrorResponse) => this.mostrarError(error),
+    });
+  }
+  private confirmarReapertura(idIncidencia: number, observacion: string): void {
+    this.screenLoadingService.show();
+    this.incidenciaApi.reabrirIncidencia({ body: { idIncidencia, observacion } }).pipe(finalize(() => this.screenLoadingService.hide())).subscribe({
+      next: () => { this.alertService.success("La incidencia se devolvió a atención correctamente."); this.cargarIncidencias(); },
       error: (error: HttpErrorResponse) => this.mostrarError(error),
     });
   }

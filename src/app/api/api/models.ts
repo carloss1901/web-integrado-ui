@@ -4,6 +4,7 @@ export { MantenerMaestroRequest } from './models/mantener-maestro-request';
 export { RegistrarUsuarioRequest } from './models/registrar-usuario-request';
 export { ActualizarEstadoIncidenciaRequest } from './models/actualizar-estado-incidencia-request';
 export { RegistrarIncidenciaRequest } from './models/registrar-incidencia-request';
+export { ReabrirIncidenciaRequest } from './models/reabrir-incidencia-request';
 export { RegistrarEvidenciaRequest } from './models/registrar-evidencia-request';
 export { RegistrarComentarioRequest } from './models/registrar-comentario-request';
 export { ClasificarIncidenciaRequest } from './models/clasificar-incidencia-request';

@@ -1,0 +1,15 @@
+<div class="ui-modal-header">
+  <h2 class="ui-modal-title">Reabrir incidencia</h2>
+  <button type="button" class="btn-close ui-modal-close" aria-label="Cerrar" (click)="cerrar()"></button>
+</div>
+<form [formGroup]="form" (ngSubmit)="guardar()">
+  <div class="ui-modal-body">
+    <p class="ui-modal-description">Indica por qué la incidencia <strong>{{ incidencia.codigo || "seleccionada" }}</strong> debe volver a atención.</p>
+    <div class="ui-form-grid"><div class="ui-field ui-field--full" [class.is-invalid]="observacionInvalida">
+      <label class="ui-field-label required" for="observacionReapertura">Observación del Supervisor</label>
+      <textarea id="observacionReapertura" rows="5" formControlName="observacion" [placeholder]="placeholders.INGRESAR"></textarea>
+      @if (observacionInvalida) { <small>La observación es obligatoria.</small> }
+    </div></div>
+  </div>
+  <div class="ui-modal-footer"><app-button texto="Cancelar" icon="x" color="danger" (click)="cerrar()"></app-button><app-button texto="Reabrir" icon="rotate-ccw" color="primary" type="submit"></app-button></div>
+</form>

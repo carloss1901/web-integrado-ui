@@ -3,7 +3,7 @@
   <button type="button" class="btn-close ui-modal-close" aria-label="Cerrar" (click)="cerrar()"></button>
 </div>
 
-<div class="ui-modal-body">
+<div class="ui-modal-body ui-modal-body--scrollable">
   @if (modoRevision) {
     <div class="ui-view-grid">
       <div class="ui-view-item"><span class="ui-field-label">Código</span><span class="ui-view-value">{{ incidencia.codigo || "-" }}</span></div>
@@ -26,31 +26,58 @@
           <ng-select inputId="revisionUrgencia" [items]="urgencias" bindLabel="nombre" bindValue="id" [clearable]="false" [searchable]="false" [placeholder]="placeholders.SELECCIONAR" formControlName="urgencia"></ng-select>
           @if (controlInvalido("urgencia")) { <small>Selecciona la urgencia.</small> }
         </div>
-        <div class="ui-field ui-field--hint">
-          <span class="ui-field-label">Reincidencia</span>
-          <span class="ui-view-value">La calcula automáticamente el sistema con la categoría y ubicación de los últimos 30 días.</span>
-        </div>
+        <div class="ui-field ui-field--hint"><span class="ui-field-label">Reincidencia</span><span class="ui-view-value">La calcula automáticamente el sistema con la categoría y ubicación de los últimos 30 días.</span></div>
       </div>
     </form>
   } @else {
+    @if (cargandoDetalle) { <p class="ui-modal-description">Cargando detalle de la incidencia...</p> }
     <div class="ui-view-grid">
       <div class="ui-view-item"><span class="ui-field-label">Código</span><span class="ui-view-value">{{ incidencia.codigo || "-" }}</span></div>
       <div class="ui-view-item"><span class="ui-field-label">Estado</span><span class="ui-view-value">{{ incidencia.estado || "-" }}</span></div>
       <div class="ui-view-item ui-view-item--full"><span class="ui-field-label">Título</span><span class="ui-view-value">{{ incidencia.titulo || "-" }}</span></div>
-      <div class="ui-view-item"><span class="ui-field-label">Reportante</span><span class="ui-view-value">{{ incidencia.reportante || "-" }}</span></div>
-      <div class="ui-view-item"><span class="ui-field-label">Responsable</span><span class="ui-view-value">{{ incidencia.responsable || "-" }}</span></div>
+      <div class="ui-view-item ui-view-item--full"><span class="ui-field-label">Descripción</span><span class="ui-view-value">{{ incidencia.descripcion || "-" }}</span></div>
+      @if (!esReportante) { <div class="ui-view-item"><span class="ui-field-label">Reportante</span><span class="ui-view-value">{{ incidencia.reportante || "-" }}</span></div> }
+      <div class="ui-view-item"><span class="ui-field-label">Responsable</span><span class="ui-view-value">{{ incidencia.responsable || "Sin asignar" }}</span></div>
       <div class="ui-view-item"><span class="ui-field-label">Categoría</span><span class="ui-view-value">{{ incidencia.categoria || "-" }}</span></div>
       <div class="ui-view-item"><span class="ui-field-label">Ubicación</span><span class="ui-view-value">{{ incidencia.ubicacion || "-" }}</span></div>
-      <div class="ui-view-item"><span class="ui-field-label">Severidad</span><span class="ui-view-value">{{ incidencia.severidad || "-" }}</span></div>
-      <div class="ui-view-item"><span class="ui-field-label">Prioridad</span><span class="ui-view-value">{{ incidencia.prioridad || "-" }}</span></div>
-      <div class="ui-view-item"><span class="ui-field-label">Impacto</span><span class="ui-view-value">{{ incidencia.impacto || "-" }}</span></div>
-      <div class="ui-view-item"><span class="ui-field-label">Urgencia</span><span class="ui-view-value">{{ incidencia.urgencia || "-" }}</span></div>
-      <div class="ui-view-item"><span class="ui-field-label">Reincidencia</span><span class="ui-view-value">{{ incidencia.reincidencia || "-" }}</span></div>
-      <div class="ui-view-item"><span class="ui-field-label">Puntuación</span><span class="ui-view-value">{{ incidencia.puntuacionPrioridad || "-" }}</span></div>
-      <div class="ui-view-item ui-view-item--full"><span class="ui-field-label">Explicación</span><span class="ui-view-value">{{ incidencia.explicacionPrioridad || "-" }}</span></div>
       <div class="ui-view-item"><span class="ui-field-label">Fecha de registro</span><span class="ui-view-value">{{ incidencia.fechaRegistro || "-" }}</span></div>
       <div class="ui-view-item"><span class="ui-field-label">Fecha límite</span><span class="ui-view-value">{{ incidencia.fechaLimite || "-" }}</span></div>
+      @if (puedeVerClasificacion) {
+        <div class="ui-view-item"><span class="ui-field-label">Severidad</span><span class="ui-view-value">{{ incidencia.severidad || "Sin clasificar" }}</span></div>
+        <div class="ui-view-item"><span class="ui-field-label">Prioridad</span><span class="ui-view-value">{{ incidencia.prioridad || "Sin clasificar" }}</span></div>
+        <div class="ui-view-item"><span class="ui-field-label">Impacto</span><span class="ui-view-value">{{ incidencia.impacto ?? "-" }}</span></div>
+        <div class="ui-view-item"><span class="ui-field-label">Urgencia</span><span class="ui-view-value">{{ incidencia.urgencia ?? "-" }}</span></div>
+      }
+      @if (esResponsable || esSupervisor || esAdministrador) {
+        <div class="ui-view-item"><span class="ui-field-label">Fecha de resolución</span><span class="ui-view-value">{{ incidencia.fechaResolucion || "-" }}</span></div>
+        <div class="ui-view-item"><span class="ui-field-label">Fecha de cierre</span><span class="ui-view-value">{{ incidencia.fechaCierre || "-" }}</span></div>
+      }
     </div>
+
+    @if (puedeVerSeguimiento) {
+      <section class="ui-traceability">
+        <h3>Seguimiento de la incidencia</h3>
+        @if (cargandoTrazabilidad) { <p class="ui-modal-description">Cargando seguimiento...</p> } @else {
+          <div class="ui-traceability-grid">
+            @if (puedeVerSeguimientoCompleto) {
+              <div class="ui-traceability-section ui-traceability-section--history">
+                <h4>Historial</h4>
+                <ol class="ui-incident-timeline">
+                  @for (item of historial; track item.idHistorial) {
+                    <li [class]="historialClass(item.tipoEvento)"><span class="ui-incident-timeline__marker"></span><div><strong>{{ item.tipoEvento }}</strong><br><small>{{ item.usuario }} · {{ item.fechaEvento }}</small><br>{{ item.descripcion || "-" }}</div></li>
+                  } @empty { <li class="ui-empty-text">Sin movimientos registrados.</li> }
+                </ol>
+              </div>
+            }
+            <div class="ui-traceability-section"><h4>Acciones correctivas</h4>@for (item of acciones; track item.idAccionCorrectiva) { <p><strong>{{ item.usuario }}</strong><br><small>{{ item.fechaRegistro }}</small><br>{{ item.descripcion }}</p> } @empty { <p class="ui-empty-text">Sin acciones registradas.</p> }</div>
+            @if (puedeVerSeguimientoCompleto) {
+              <div class="ui-traceability-section"><h4>Comentarios</h4>@for (item of comentarios; track item.idComentario) { <p><strong>{{ item.usuario }}</strong><br><small>{{ item.fechaRegistro }}</small><br>{{ item.comentario }}</p> } @empty { <p class="ui-empty-text">Sin comentarios registrados.</p> }</div>
+            }
+            <div class="ui-traceability-section"><h4>Evidencias</h4>@for (item of evidencias; track item.idEvidencia) { <p><strong>{{ item.nombreArchivo }}</strong><br><small>{{ item.usuario }} · {{ item.fechaRegistro }}</small><br>{{ item.descripcion || "-" }}</p> } @empty { <p class="ui-empty-text">Sin evidencias registradas.</p> }</div>
+          </div>
+        }
+      </section>
+    }
   }
 </div>
 

@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 import { NgSelectModule } from "@ng-select/ng-select";
@@ -8,6 +8,14 @@ import { MaestroResponse } from "../../../../api/api/models/maestro-response";
 import { PlaceholderEnum } from "../../../../core/enums/placeholder.enum";
 import { AlertService } from "../../../../core/services/alert.service";
 import { AppButtonComponent } from "../../../../shared/components/app-button/app-button.component";
+import { IncidenciaAccionCorrectivaResponse } from "../../../../api/api/models/incidencia-accion-correctiva-response";
+import { IncidenciaComentarioResponse } from "../../../../api/api/models/incidencia-comentario-response";
+import { IncidenciaEvidenciaResponse } from "../../../../api/api/models/incidencia-evidencia-response";
+import { IncidenciaHistorialResponse } from "../../../../api/api/models/incidencia-historial-response";
+import { IncidenciaControllerService } from "../../../../api/api/services/incidencia-controller.service";
+import { catchError, finalize, forkJoin, of } from "rxjs";
+import { Role } from "../../../../core/constants/role.enum";
+import { SessionService } from "../../../../core/services/session.service";
 
 export interface IncidenciaRevisionResult {
   idIncidencia: number;
@@ -16,13 +24,23 @@ export interface IncidenciaRevisionResult {
   urgencia: number;
 }
 
+interface IncidenciaDetalleEnvelope {
+  data?: IncidenciaResponse;
+}
+
 @Component({ selector: "app-incidencia-view-modal", standalone: true, imports: [CommonModule, ReactiveFormsModule, NgSelectModule, AppButtonComponent], templateUrl: "./incidencia-view-modal.component.html" })
-export class IncidenciaViewModalComponent {
+export class IncidenciaViewModalComponent implements OnInit {
   readonly placeholders = PlaceholderEnum;
   @Input({ required: true }) incidencia!: IncidenciaResponse;
   @Input() modoRevision = false;
   @Input() severidades: MaestroResponse[] = [];
   submitted = false;
+  cargandoDetalle = false;
+  cargandoTrazabilidad = false;
+  historial: IncidenciaHistorialResponse[] = [];
+  comentarios: IncidenciaComentarioResponse[] = [];
+  evidencias: IncidenciaEvidenciaResponse[] = [];
+  acciones: IncidenciaAccionCorrectivaResponse[] = [];
   readonly impactos = [
     { id: 1, nombre: "Bajo" },
     { id: 2, nombre: "Medio" },
@@ -45,7 +63,88 @@ export class IncidenciaViewModalComponent {
     private readonly formBuilder: FormBuilder,
     public readonly activeModal: NgbActiveModal,
     private readonly alertService: AlertService,
+    private readonly incidenciaApi: IncidenciaControllerService,
+    private readonly session: SessionService,
   ) {}
+
+  ngOnInit(): void {
+    if (this.modoRevision) {
+      const severidad = this.severidades.find((item) =>
+        this.normalizar(item.descripcion) === this.normalizar(this.incidencia.severidad)
+      );
+      this.form.patchValue({
+        idSeveridad: severidad?.maestroId ?? null,
+        impacto: this.incidencia.impacto ?? null,
+        urgencia: this.incidencia.urgencia ?? null,
+      });
+    } else if (this.incidencia.idIncidencia !== undefined) {
+      this.cargarDetalle();
+    }
+  }
+
+  get esReportante(): boolean { return this.session.selectedRole?.id === Role.REPORTANTE; }
+  get esResponsable(): boolean { return this.session.selectedRole?.id === Role.RESPONSABLE_ATENCION; }
+  get esSupervisor(): boolean { return this.session.selectedRole?.id === Role.SUPERVISOR; }
+  get esAdministrador(): boolean { return this.session.selectedRole?.id === Role.ADMINISTRADOR; }
+  get puedeVerClasificacion(): boolean { return !this.esReportante; }
+  get puedeVerSeguimiento(): boolean { return this.esResponsable || this.esSupervisor || this.esAdministrador; }
+  get puedeVerSeguimientoCompleto(): boolean { return this.esSupervisor || this.esAdministrador; }
+
+  private normalizar(value?: string): string {
+    return (value ?? "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+
+  private cargarDetalle(): void {
+    const idIncidencia = this.incidencia.idIncidencia;
+    if (idIncidencia === undefined) return;
+
+    this.cargandoDetalle = true;
+    this.incidenciaApi.obtenerIncidencia({ idIncidencia }).pipe(
+      finalize(() => (this.cargandoDetalle = false)),
+    ).subscribe({
+      next: (response) => {
+        const detalle = (response as IncidenciaDetalleEnvelope).data;
+        if (detalle) this.incidencia = detalle;
+        this.cargarTrazabilidad();
+      },
+      error: () => this.alertService.error("No se pudo cargar el detalle de la incidencia."),
+    });
+  }
+
+  private cargarTrazabilidad(): void {
+    if (!this.puedeVerSeguimiento) return;
+
+    const idIncidencia = this.incidencia.idIncidencia!;
+    this.cargandoTrazabilidad = true;
+    forkJoin({
+      historial: this.puedeVerSeguimientoCompleto
+        ? this.incidenciaApi.listarHistorial({ idIncidencia, page: 1, size: 50 }).pipe(catchError(() => of({ data: [] })))
+        : of({ data: [] }),
+      comentarios: this.puedeVerSeguimientoCompleto
+        ? this.incidenciaApi.listarComentarios({ idIncidencia, page: 1, size: 50 }).pipe(catchError(() => of({ data: [] })))
+        : of({ data: [] }),
+      evidencias: this.incidenciaApi.listarEvidencias({ idIncidencia, page: 1, size: 50 }).pipe(catchError(() => of({ data: [] }))),
+      acciones: this.incidenciaApi.listarAccionesCorrectivas({ idIncidencia, page: 1, size: 50 }).pipe(catchError(() => of({ data: [] }))),
+    }).subscribe((resultados) => {
+      this.historial = resultados.historial.data ?? [];
+      this.comentarios = resultados.comentarios.data ?? [];
+      this.evidencias = resultados.evidencias.data ?? [];
+      this.acciones = resultados.acciones.data ?? [];
+      this.cargandoTrazabilidad = false;
+    });
+  }
+
+  historialClass(tipoEvento?: string): string {
+    const evento = this.normalizar(tipoEvento);
+    if (evento.includes("registro")) return "is-registration";
+    if (evento.includes("clasific") || evento.includes("prioridad") || evento.includes("severidad")) return "is-classification";
+    if (evento.includes("asign")) return "is-assignment";
+    if (evento.includes("inicio") || evento.includes("atencion")) return "is-attention";
+    if (evento.includes("resol")) return "is-resolution";
+    if (evento.includes("cierre")) return "is-closure";
+    if (evento.includes("reapert")) return "is-reopen";
+    return "is-default";
+  }
 
   controlInvalido(controlName: string): boolean {
     const control = this.form.get(controlName);

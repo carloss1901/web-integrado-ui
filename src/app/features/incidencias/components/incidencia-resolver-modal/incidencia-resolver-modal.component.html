@@ -1,0 +1,22 @@
+<div class="ui-modal-header">
+  <h2 class="ui-modal-title">Resolver incidencia</h2>
+  <button type="button" class="btn-close ui-modal-close" aria-label="Cerrar" (click)="cerrar()"></button>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="guardar()">
+  <div class="ui-modal-body">
+    <p class="ui-modal-description">Registra la solución aplicada para la incidencia <strong>{{ incidencia.codigo || "seleccionada" }}</strong>.</p>
+    <div class="ui-form-grid">
+      <div class="ui-field ui-field--full" [class.is-invalid]="descripcionInvalida">
+        <label class="ui-field-label required" for="descripcionResolucion">Descripción de la resolución</label>
+        <textarea id="descripcionResolucion" rows="5" formControlName="descripcionResolucion" [placeholder]="placeholders.INGRESAR"></textarea>
+        @if (descripcionInvalida) { <small>La descripción de la resolución es obligatoria.</small> }
+      </div>
+    </div>
+  </div>
+
+  <div class="ui-modal-footer">
+    <app-button texto="Cancelar" icon="x" color="danger" (click)="cerrar()"></app-button>
+    <app-button texto="Resolver" icon="check-circle" color="primary" type="submit"></app-button>
+  </div>
+</form>

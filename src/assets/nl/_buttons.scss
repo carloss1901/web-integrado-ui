@@ -244,6 +244,24 @@ app-button .btn,
     background: $nl-green-light;
   }
 
+  &--resolve:hover {
+    border-color: $cs-success;
+    color: $cs-success;
+    background: $nl-green-light;
+  }
+
+  &--close:hover {
+    border-color: #4f46a5;
+    color: #4f46a5;
+    background: #e8e7fa;
+  }
+
+  &--reopen:hover {
+    border-color: $cs-danger;
+    color: $cs-danger;
+    background: $nl-red-ligth;
+  }
+
   &--delete:hover {
     border-color: $cs-danger;
     color: $cs-danger;

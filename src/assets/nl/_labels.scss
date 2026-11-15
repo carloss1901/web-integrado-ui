@@ -184,6 +184,58 @@
   background: #84cc16;
 }
 
+.ui-status-badge.is-registered {
+  color: #2563eb;
+}
+.ui-status-badge.is-registered .ui-status-dot {
+  background: #3b82f6;
+}
+.ui-status-badge.is-classified {
+  color: #7c3aed;
+}
+.ui-status-badge.is-classified .ui-status-dot {
+  background: #8b5cf6;
+}
+.ui-status-badge.is-assigned {
+  color: #0369a1;
+}
+.ui-status-badge.is-assigned .ui-status-dot {
+  background: #0ea5e9;
+}
+.ui-status-badge.is-attending {
+  color: #c2410c;
+}
+.ui-status-badge.is-attending .ui-status-dot {
+  background: #f97316;
+}
+.ui-status-badge.is-waiting {
+  color: #a16207;
+}
+.ui-status-badge.is-waiting .ui-status-dot {
+  background: #eab308;
+}
+.ui-status-badge.is-resolved {
+  color: #15803d;
+}
+.ui-status-badge.is-resolved .ui-status-dot {
+  background: #22c55e;
+}
+.ui-status-badge.is-closed {
+  color: #475569;
+}
+.ui-status-badge.is-closed .ui-status-dot {
+  background: #64748b;
+}
+.ui-status-badge.is-reopened {
+  color: #9333ea;
+}
+.ui-status-badge.is-reopened .ui-status-dot {
+  background: #c026d3;
+}
+.ui-status-badge.is-default {
+  color: #0f766e;
+}
+
 .ui-incident-badge {
   display: inline-flex;
   align-items: center;
@@ -198,8 +250,8 @@
 }
 
 .ui-incident-badge--high {
-  color: #9c1f24;
-  background: #fde5e5;
+  color: #c2410c;
+  background: #ffedd5;
 }
 
 .ui-incident-badge--medium {
@@ -208,6 +260,16 @@
 }
 
 .ui-incident-badge--low {
-  color: #005f78;
-  background: #ddf4fa;
+  color: #3f6b00;
+  background: #e3f3d8;
+}
+
+.ui-incident-badge--critical {
+  color: #9c1f24;
+  background: #fde5e5;
+}
+
+.ui-incident-badge--empty {
+  color: $nl-grey-40;
+  background: $nl-grey-10;
 }

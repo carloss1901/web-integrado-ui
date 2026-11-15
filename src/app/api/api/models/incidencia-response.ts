@@ -3,6 +3,7 @@
 export interface IncidenciaResponse {
   categoria?: string;
   codigo?: string;
+  descripcion?: string;
   estado?: string;
   explicacionPrioridad?: string;
   fechaCierre?: string;
