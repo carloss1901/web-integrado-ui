@@ -29,14 +29,13 @@ export class IncidenciasComponent implements OnInit, OnDestroy {
   estados: MaestroResponse[] = [];
   categorias: MaestroResponse[] = [];
   severidades: MaestroResponse[] = [];
-  prioridades: MaestroResponse[] = [];
   ubicaciones: MaestroResponse[] = [];
   loading = false;
   page = 1;
   pageSize = 5;
   totalItems = 0;
   readonly pageSizeOptions = [5, 10, 15];
-  readonly filterForm = this.formBuilder.group({ codigo: [""], titulo: [""], reportante: [""], estado: [null as number | null], categoria: [null as string | null], prioridad: [null as string | null], severidad: [null as number | null], ubicacion: [null as string | null] });
+  readonly filterForm = this.formBuilder.group({ codigo: [""], titulo: [""], categoria: [null as string | null], estado: [null as number | null] });
   private roleSubscription?: Subscription;
 
   constructor(private readonly formBuilder: FormBuilder, private readonly incidenciaApi: IncidenciaControllerService, private readonly comunesApi: ComunesControllerService, private readonly modalService: NgbModal, private readonly alertService: AlertService, private readonly screenLoadingService: ScreenLoadingService, private readonly session: SessionService) {}
@@ -62,7 +61,6 @@ export class IncidenciasComponent implements OnInit, OnDestroy {
     const modalRef = this.modalService.open(IncidenciaViewModalComponent, { centered: true, size: "lg", backdrop: "static", keyboard: false });
     modalRef.componentInstance.incidencia = incidencia;
     modalRef.componentInstance.modoRevision = true;
-    modalRef.componentInstance.severidades = this.severidades;
     modalRef.result.then((value: IncidenciaRevisionResult) => this.clasificarIncidencia(value)).catch(() => undefined);
   }
   abrirRegistrar(): void {
@@ -155,26 +153,24 @@ export class IncidenciasComponent implements OnInit, OnDestroy {
     this.solicitarObservacion(incidencia, "Cancelar incidencia", "Indica el motivo por el que se cancela la incidencia", "Motivo de cancelación", "Cancelar incidencia", "slash", (observacion) => this.confirmarCancelacion(incidencia.idIncidencia!, observacion));
   }
   aplicarFiltros(): void { this.page = 1; this.cargarIncidencias(); }
-  limpiarFiltros(): void { this.filterForm.reset({ codigo: "", titulo: "", reportante: "", estado: null, categoria: null, prioridad: null, severidad: null, ubicacion: null }); this.page = 1; this.cargarIncidencias(); }
+  limpiarFiltros(): void { this.filterForm.reset({ codigo: "", titulo: "", categoria: null, estado: null }); this.page = 1; this.cargarIncidencias(); }
   onChangePaginate(event: PaginationChange): void { this.page = event.page; this.pageSize = event.pageSize; this.cargarIncidencias(); }
 
   private cargarIncidencias(): void {
     this.loading = true;
     const filtros = this.filterForm.getRawValue();
-    this.incidenciaApi.listarIncidenciasPaginadas({ idEstado: filtros.estado ?? undefined, idSeveridad: filtros.severidad ?? undefined, page: this.page, size: this.pageSize }).pipe(finalize(() => (this.loading = false))).subscribe({ next: (response) => { this.incidencias = response.data ?? []; this.totalItems = response.pageable?.totalElements ?? 0; }, error: (error: HttpErrorResponse) => this.mostrarError(error) });
+    this.incidenciaApi.listarIncidenciasPaginadas({ idEstado: filtros.estado ?? undefined, page: this.page, size: this.pageSize }).pipe(finalize(() => (this.loading = false))).subscribe({ next: (response) => { this.incidencias = response.data ?? []; this.totalItems = response.pageable?.totalElements ?? 0; }, error: (error: HttpErrorResponse) => this.mostrarError(error) });
   }
   private cargarCatalogos(): void {
     forkJoin({
       estados: this.comunesApi.listarEstadosIncidencia().pipe(catchError(() => of([] as MaestroResponse[]))),
       categorias: this.comunesApi.listarCategorias().pipe(catchError(() => of([] as MaestroResponse[]))),
       severidades: this.comunesApi.listarSeveridades().pipe(catchError(() => of([] as MaestroResponse[]))),
-      prioridades: this.comunesApi.listarPrioridades().pipe(catchError(() => of([] as MaestroResponse[]))),
       ubicaciones: this.comunesApi.listarUbicaciones().pipe(catchError(() => of([] as MaestroResponse[]))),
     }).subscribe((catalogos) => {
       this.estados = catalogos.estados ?? [];
       this.categorias = catalogos.categorias ?? [];
       this.severidades = catalogos.severidades ?? [];
-      this.prioridades = catalogos.prioridades ?? [];
       this.ubicaciones = catalogos.ubicaciones ?? [];
     });
   }
