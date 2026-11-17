@@ -13,6 +13,7 @@ export class IncidenciasTableComponent {
   @Input() puedeRevisar = false;
   @Input() puedeIniciarAtencion = false;
   @Input() puedeCerrar = false;
+  @Input() puedeCancelar = false;
   @Input() mostrarReportante = true;
   @Output() view = new EventEmitter<IncidenciaResponse>();
   @Output() review = new EventEmitter<IncidenciaResponse>();
@@ -21,6 +22,10 @@ export class IncidenciasTableComponent {
   @Output() resolve = new EventEmitter<IncidenciaResponse>();
   @Output() close = new EventEmitter<IncidenciaResponse>();
   @Output() reopen = new EventEmitter<IncidenciaResponse>();
+  @Output() wait = new EventEmitter<IncidenciaResponse>();
+  @Output() resume = new EventEmitter<IncidenciaResponse>();
+  @Output() cancel = new EventEmitter<IncidenciaResponse>();
+  @Output() supervisorReview = new EventEmitter<IncidenciaResponse>();
   correlativo(index: number): number { return (this.page - 1) * this.pageSize + index + 1; }
   estadoClass(estado?: string): string {
     const value = this.normalizar(estado);
@@ -46,11 +51,58 @@ export class IncidenciasTableComponent {
   esAsignada(incidencia: IncidenciaResponse): boolean {
     return this.normalizar(incidencia.estado).includes("asign");
   }
+  esRegistrada(incidencia: IncidenciaResponse): boolean {
+    return this.normalizar(incidencia.estado).includes("registr");
+  }
+  esClasificada(incidencia: IncidenciaResponse): boolean {
+    return this.normalizar(incidencia.estado).includes("clasific");
+  }
   esEnAtencion(incidencia: IncidenciaResponse): boolean {
     return this.normalizar(incidencia.estado).includes("atencion");
   }
   esResuelta(incidencia: IncidenciaResponse): boolean {
     return this.normalizar(incidencia.estado).includes("resuelt");
+  }
+  esEnEspera(incidencia: IncidenciaResponse): boolean {
+    return this.normalizar(incidencia.estado).includes("espera");
+  }
+  esReabierta(incidencia: IncidenciaResponse): boolean {
+    return this.normalizar(incidencia.estado).includes("reabiert");
+  }
+  puedeCancelarse(incidencia: IncidenciaResponse): boolean {
+    return this.esRegistrada(incidencia) || this.esClasificada(incidencia) || this.esAsignada(incidencia) || this.esEnEspera(incidencia);
+  }
+  puedeClasificarIncidencia(incidencia: IncidenciaResponse): boolean {
+    return this.puedeRevisar && this.esRegistrada(incidencia);
+  }
+  puedeAsignarResponsable(incidencia: IncidenciaResponse): boolean {
+    return this.puedeRevisar && (this.esClasificada(incidencia) || this.esAsignada(incidencia));
+  }
+  puedeIniciarAtencionIncidencia(incidencia: IncidenciaResponse): boolean {
+    return this.puedeIniciarAtencion && this.esAsignada(incidencia);
+  }
+  puedeResolverIncidencia(incidencia: IncidenciaResponse): boolean {
+    return this.puedeIniciarAtencion && this.esEnAtencion(incidencia);
+  }
+  puedePonerEnEspera(incidencia: IncidenciaResponse): boolean {
+    return this.puedeIniciarAtencion && this.esEnAtencion(incidencia);
+  }
+  puedeReanudarAtencion(incidencia: IncidenciaResponse): boolean {
+    return this.puedeIniciarAtencion && (this.esEnEspera(incidencia) || this.esReabierta(incidencia));
+  }
+  puedeCerrarIncidencia(incidencia: IncidenciaResponse): boolean {
+    return this.puedeCerrar && this.esResuelta(incidencia)
+      && (!this.esCritica(incidencia) || incidencia.revisionSupervisorAprobada === true);
+  }
+  requiereRevisionSupervisor(incidencia: IncidenciaResponse): boolean {
+    return this.puedeCerrar && this.esResuelta(incidencia) && this.esCritica(incidencia)
+      && incidencia.revisionSupervisorAprobada !== true;
+  }
+  puedeReabrirIncidencia(incidencia: IncidenciaResponse): boolean {
+    return this.puedeCerrar && this.esResuelta(incidencia);
+  }
+  puedeCancelarIncidencia(incidencia: IncidenciaResponse): boolean {
+    return this.puedeCancelar && this.puedeCancelarse(incidencia);
   }
   vencida(incidencia: IncidenciaResponse): boolean {
     const estado = this.normalizar(incidencia.estado);
@@ -59,4 +111,5 @@ export class IncidenciasTableComponent {
     return !Number.isNaN(fechaLimite.getTime()) && fechaLimite.getTime() < Date.now();
   }
   private normalizar(value?: string): string { return (value ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
+  private esCritica(incidencia: IncidenciaResponse): boolean { return this.normalizar(incidencia.severidad).includes("crit"); }
 }

@@ -22,12 +22,16 @@ export interface SessionRole {
 export class SessionService {
   private readonly fallbackUser: User = { id: 0, name: 'Usuario', role: 'Sin rol' };
   private readonly legacyTokenKey = 'web-integrado.token';
+  private readonly sessionStartedAtKey = 'web-integrado.session-started-at';
   private readonly selectedRoleSubject = new BehaviorSubject<SessionRole | null>(null);
   readonly selectedRole$ = this.selectedRoleSubject.pipe(
     distinctUntilChanged((previous, current) => previous?.id === current?.id),
   );
 
   constructor() {
+    if (this.token && !localStorage.getItem(this.sessionStartedAtKey)) {
+      localStorage.setItem(this.sessionStartedAtKey, new Date().toISOString());
+    }
     this.selectedRoleSubject.next(this.selectedRole);
   }
 
@@ -42,6 +46,12 @@ export class SessionService {
 
   get isAuthenticated(): boolean {
     return Boolean(this.token);
+  }
+
+  get sessionStartedAt(): Date {
+    const storedValue = localStorage.getItem(this.sessionStartedAtKey);
+    const timestamp = storedValue ? Date.parse(storedValue) : NaN;
+    return Number.isNaN(timestamp) ? new Date() : new Date(timestamp);
   }
 
   get availableRoles(): SessionRole[] {
@@ -67,6 +77,7 @@ export class SessionService {
     localStorage.removeItem(this.legacyTokenKey);
     localStorage.setItem(STORAGE_KEYS.token, token);
     localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(user));
+    localStorage.setItem(this.sessionStartedAtKey, new Date().toISOString());
     this.selectedRoleSubject.next(this.selectedRole);
   }
 
@@ -74,6 +85,7 @@ export class SessionService {
     localStorage.removeItem(this.legacyTokenKey);
     localStorage.removeItem(STORAGE_KEYS.token);
     localStorage.removeItem(STORAGE_KEYS.user);
+    localStorage.removeItem(this.sessionStartedAtKey);
     sessionStorage.removeItem(STORAGE_KEYS.user);
     this.selectedRoleSubject.next(null);
   }
@@ -86,6 +98,10 @@ export class SessionService {
 
     const normalizedPayload = encodedPayload.replace(/-/g, '+').replace(/_/g, '/');
     const padding = '='.repeat((4 - normalizedPayload.length % 4) % 4);
-    return JSON.parse(atob(normalizedPayload + padding)) as JwtPayload;
+    const decodedBytes = Uint8Array.from(
+      atob(normalizedPayload + padding),
+      (character) => character.charCodeAt(0),
+    );
+    return JSON.parse(new TextDecoder().decode(decodedBytes)) as JwtPayload;
   }
 }

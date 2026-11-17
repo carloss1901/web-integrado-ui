@@ -2,8 +2,10 @@ export { ActualizarUsuarioRequest } from './models/actualizar-usuario-request';
 export { ActualizarIncidenciaRequest } from './models/actualizar-incidencia-request';
 export { MantenerMaestroRequest } from './models/mantener-maestro-request';
 export { RegistrarUsuarioRequest } from './models/registrar-usuario-request';
+export { RegistrarRevisionSupervisorRequest } from './models/registrar-revision-supervisor-request';
 export { ActualizarEstadoIncidenciaRequest } from './models/actualizar-estado-incidencia-request';
 export { RegistrarIncidenciaRequest } from './models/registrar-incidencia-request';
+export { CambiarEstadoIncidenciaRequest } from './models/cambiar-estado-incidencia-request';
 export { ReabrirIncidenciaRequest } from './models/reabrir-incidencia-request';
 export { RegistrarEvidenciaRequest } from './models/registrar-evidencia-request';
 export { RegistrarComentarioRequest } from './models/registrar-comentario-request';
@@ -28,4 +30,7 @@ export { IncidenciaAccionCorrectivaResponse } from './models/incidencia-accion-c
 export { CustomPageIncidenciaResponse } from './models/custom-page-incidencia-response';
 export { IncidenciaResponse } from './models/incidencia-response';
 export { IndicadoresIncidenciaResponse } from './models/indicadores-incidencia-response';
+export { CargaResponsableResponse } from './models/carga-responsable-response';
+export { DashboardIncidenciasResponse } from './models/dashboard-incidencias-response';
+export { IndicadorAgrupadoResponse } from './models/indicador-agrupado-response';
 export { IncidenciaBusquedaResponse } from './models/incidencia-busqueda-response';

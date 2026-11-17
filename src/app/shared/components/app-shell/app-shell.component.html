@@ -8,14 +8,14 @@
             <div class="header-navbar-button px-2" *ngIf="!requiresRoleSelection">
               <button class="navbar-toggler text-white" type="button" aria-label="Abrir menú" (click)="alternarMenu()"><span class="feather icon-menu" aria-hidden="true"></span></button>
             </div>
-            <div class="agrihusa-header__title"><span class="link-to-landing">WEB INTEGRADO</span></div>
+            <div class="agrihusa-header__title"><span class="link-to-landing">CAMPUS SEGURO</span></div>
             <div class="header-combo" *ngIf="!requiresRoleSelection">
               <div class="header-combo-content"><span class="header-combo-label">ROL ACTUAL</span><ng-select class="header-ng-select" [items]="roles" bindLabel="nombre" [clearable]="false" [searchable]="false" [ngModel]="rolActual" appendTo="body" (change)="cambiarRol($event)" aria-label="Seleccionar rol"></ng-select></div>
             </div>
           </div>
           <div class="header-container-right">
             <div class="header-dropdown-toggle">
-              <div class="profile-group text-white me-3"><div class="user-meta"><h6 class="mb-0 fw-bold header-container-right-username">{{ user.name }}</h6><p class="mb-0 header-container-right-address">{{ user.role }} <span aria-hidden="true"> | </span> CAMPUSSEGURO 360</p></div></div>
+              <div class="profile-group text-white me-3"><div class="user-meta"><h6 class="mb-0 fw-bold header-container-right-username">{{ user.name }}</h6><p class="mb-0 header-container-right-address">{{ sessionEntryAt | date:'dd/MM/yyyy HH:mm:ss' }}</p></div></div>
               <button class="logout-btn" type="button" (click)="salir()"><span class="feather icon-log-out" aria-hidden="true"></span><span>Salir</span></button>
             </div>
           </div>
@@ -37,10 +37,8 @@
               <div class="accordion-body">
                 <ul>
                   <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/inicio">Inicio</a></li>
-                  <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/usuarios">Usuarios</a></li>
+                  <li *ngIf="esAdministrador" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/usuarios">Usuarios</a></li>
                   <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"><a routerLink="/incidencias">Incidencias</a></li>
-                  <li><span>Configuración</span></li>
-                  <li><span>Reportes</span></li>
                 </ul>
               </div>
               }

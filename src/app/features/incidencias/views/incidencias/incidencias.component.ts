@@ -25,7 +25,6 @@ import { PaginationChange, TableFooterPaginationComponent } from "../../../../sh
 
 @Component({ selector: "app-incidencias", standalone: true, imports: [CommonModule, ReactiveFormsModule, TopbarComponent, AppButtonComponent, TableFooterPaginationComponent, IncidenciasFilterComponent, IncidenciasTableComponent, IncidenciaModalComponent, IncidenciaViewModalComponent], templateUrl: "./incidencias.component.html" })
 export class IncidenciasComponent implements OnInit, OnDestroy {
-  private incidenciasTodas: IncidenciaResponse[] = [];
   incidencias: IncidenciaResponse[] = [];
   estados: MaestroResponse[] = [];
   categorias: MaestroResponse[] = [];
@@ -37,7 +36,7 @@ export class IncidenciasComponent implements OnInit, OnDestroy {
   pageSize = 5;
   totalItems = 0;
   readonly pageSizeOptions = [5, 10, 15];
-  readonly filterForm = this.formBuilder.group({ codigo: [""], titulo: [""], reportante: [""], estado: [null as string | null], categoria: [null as string | null], prioridad: [null as string | null], severidad: [null as string | null], ubicacion: [null as string | null] });
+  readonly filterForm = this.formBuilder.group({ codigo: [""], titulo: [""], reportante: [""], estado: [null as number | null], categoria: [null as string | null], prioridad: [null as string | null], severidad: [null as number | null], ubicacion: [null as string | null] });
   private roleSubscription?: Subscription;
 
   constructor(private readonly formBuilder: FormBuilder, private readonly incidenciaApi: IncidenciaControllerService, private readonly comunesApi: ComunesControllerService, private readonly modalService: NgbModal, private readonly alertService: AlertService, private readonly screenLoadingService: ScreenLoadingService, private readonly session: SessionService) {}
@@ -120,25 +119,49 @@ export class IncidenciasComponent implements OnInit, OnDestroy {
       if (confirmado) this.confirmarCierre(incidencia.idIncidencia!);
     }).catch(() => undefined);
   }
+  revisarIncidenciaCritica(incidencia: IncidenciaResponse): void {
+    if (incidencia.idIncidencia === undefined) return;
+    const modalRef = this.modalService.open(IncidenciaReabrirModalComponent, {
+      centered: true,
+      size: "lg",
+      backdrop: "static",
+      keyboard: false,
+    });
+    modalRef.componentInstance.incidencia = incidencia;
+    modalRef.componentInstance.titulo = "Revisión de incidencia crítica";
+    modalRef.componentInstance.descripcion = "Registra la decisión de supervisor antes del cierre de la incidencia crítica";
+    modalRef.componentInstance.etiquetaObservacion = "Observación de la revisión";
+    modalRef.componentInstance.textoAccion = "Registrar revisión";
+    modalRef.componentInstance.iconoAccion = "clipboard";
+    modalRef.componentInstance.requiereDecision = true;
+    modalRef.result.then((value: IncidenciaReabrirResult) => {
+      this.confirmarRevisionCritica(incidencia.idIncidencia!, value.aprobada === true, value.observacion);
+    }).catch(() => undefined);
+  }
   reabrirIncidencia(incidencia: IncidenciaResponse): void {
     if (incidencia.idIncidencia === undefined) return;
-    const modalRef = this.modalService.open(IncidenciaReabrirModalComponent, { centered: true, size: "lg", backdrop: "static", keyboard: false });
-    modalRef.componentInstance.incidencia = incidencia;
-    modalRef.result.then((value: IncidenciaReabrirResult) => this.confirmarReapertura(incidencia.idIncidencia!, value.observacion)).catch(() => undefined);
+    this.solicitarObservacion(incidencia, "Reabrir incidencia", "Indica por qué la incidencia debe volver a atención.", "Observación del Supervisor", "Reabrir", "rotate-ccw", (observacion) => this.confirmarReapertura(incidencia.idIncidencia!, observacion));
   }
-  aplicarFiltros(): void { this.page = 1; this.aplicarFiltrado(); }
-  limpiarFiltros(): void { this.filterForm.reset({ codigo: "", titulo: "", reportante: "", estado: null, categoria: null, prioridad: null, severidad: null, ubicacion: null }); this.page = 1; this.aplicarFiltrado(); }
-  onChangePaginate(event: PaginationChange): void { this.page = event.page; this.pageSize = event.pageSize; this.aplicarFiltrado(); }
+  ponerEnEspera(incidencia: IncidenciaResponse): void {
+    if (incidencia.idIncidencia === undefined) return;
+    this.solicitarObservacion(incidencia, "Poner incidencia en espera", "Indica el motivo temporal por el que se suspende la atención de la incidencia", "Motivo de espera", "Poner en espera", "pause", (observacion) => this.confirmarEspera(incidencia.idIncidencia!, observacion));
+  }
+  reanudarAtencion(incidencia: IncidenciaResponse): void {
+    if (incidencia.idIncidencia === undefined) return;
+    this.solicitarObservacion(incidencia, "Reanudar atención", "Registra el motivo por el que se retoma la atención de la incidencia", "Observación", "Reanudar", "play", (observacion) => this.confirmarReanudacion(incidencia.idIncidencia!, observacion));
+  }
+  cancelarIncidencia(incidencia: IncidenciaResponse): void {
+    if (incidencia.idIncidencia === undefined) return;
+    this.solicitarObservacion(incidencia, "Cancelar incidencia", "Indica el motivo por el que se cancela la incidencia", "Motivo de cancelación", "Cancelar incidencia", "slash", (observacion) => this.confirmarCancelacion(incidencia.idIncidencia!, observacion));
+  }
+  aplicarFiltros(): void { this.page = 1; this.cargarIncidencias(); }
+  limpiarFiltros(): void { this.filterForm.reset({ codigo: "", titulo: "", reportante: "", estado: null, categoria: null, prioridad: null, severidad: null, ubicacion: null }); this.page = 1; this.cargarIncidencias(); }
+  onChangePaginate(event: PaginationChange): void { this.page = event.page; this.pageSize = event.pageSize; this.cargarIncidencias(); }
 
   private cargarIncidencias(): void {
     this.loading = true;
-    const idRol = this.session.selectedRole?.id;
-    const solicitud = idRol === Role.REPORTANTE
-      ? this.incidenciaApi.listarMisIncidenciasReportadas()
-      : idRol === Role.RESPONSABLE_ATENCION
-        ? this.incidenciaApi.listarMisIncidenciasAsignadas()
-        : this.incidenciaApi.listarIncidencias();
-    solicitud.pipe(finalize(() => (this.loading = false))).subscribe({ next: (response) => { this.incidenciasTodas = response ?? []; this.aplicarFiltrado(); }, error: (error: HttpErrorResponse) => this.mostrarError(error) });
+    const filtros = this.filterForm.getRawValue();
+    this.incidenciaApi.listarIncidenciasPaginadas({ idEstado: filtros.estado ?? undefined, idSeveridad: filtros.severidad ?? undefined, page: this.page, size: this.pageSize }).pipe(finalize(() => (this.loading = false))).subscribe({ next: (response) => { this.incidencias = response.data ?? []; this.totalItems = response.pageable?.totalElements ?? 0; }, error: (error: HttpErrorResponse) => this.mostrarError(error) });
   }
   private cargarCatalogos(): void {
     forkJoin({
@@ -194,6 +217,27 @@ export class IncidenciasComponent implements OnInit, OnDestroy {
       error: (error: HttpErrorResponse) => this.mostrarError(error),
     });
   }
+  private confirmarEspera(idIncidencia: number, observacion: string): void {
+    this.screenLoadingService.show();
+    this.incidenciaApi.ponerEnEspera({ body: { idIncidencia, observacion } }).pipe(finalize(() => this.screenLoadingService.hide())).subscribe({
+      next: () => { this.alertService.success("La incidencia quedó en espera."); this.cargarIncidencias(); },
+      error: (error: HttpErrorResponse) => this.mostrarError(error),
+    });
+  }
+  private confirmarReanudacion(idIncidencia: number, observacion: string): void {
+    this.screenLoadingService.show();
+    this.incidenciaApi.reanudarAtencion({ body: { idIncidencia, observacion } }).pipe(finalize(() => this.screenLoadingService.hide())).subscribe({
+      next: () => { this.alertService.success("La atención de la incidencia fue reanudada."); this.cargarIncidencias(); },
+      error: (error: HttpErrorResponse) => this.mostrarError(error),
+    });
+  }
+  private confirmarCancelacion(idIncidencia: number, observacion: string): void {
+    this.screenLoadingService.show();
+    this.incidenciaApi.cancelarIncidencia({ body: { idIncidencia, observacion } }).pipe(finalize(() => this.screenLoadingService.hide())).subscribe({
+      next: () => { this.alertService.success("La incidencia fue cancelada."); this.cargarIncidencias(); },
+      error: (error: HttpErrorResponse) => this.mostrarError(error),
+    });
+  }
   private confirmarCierre(idIncidencia: number): void {
     this.screenLoadingService.show();
     this.incidenciaApi.cerrarIncidencia({ body: { idIncidencia } }).pipe(finalize(() => this.screenLoadingService.hide())).subscribe({
@@ -201,23 +245,32 @@ export class IncidenciasComponent implements OnInit, OnDestroy {
       error: (error: HttpErrorResponse) => this.mostrarError(error),
     });
   }
-  private confirmarReapertura(idIncidencia: number, observacion: string): void {
+  private confirmarRevisionCritica(idIncidencia: number, aprobada: boolean, observacion: string): void {
     this.screenLoadingService.show();
-    this.incidenciaApi.reabrirIncidencia({ body: { idIncidencia, observacion } }).pipe(finalize(() => this.screenLoadingService.hide())).subscribe({
-      next: () => { this.alertService.success("La incidencia se devolvió a atención correctamente."); this.cargarIncidencias(); },
+    this.incidenciaApi.registrarRevisionSupervisor({ body: { idIncidencia, aprobada, observacion } }).pipe(finalize(() => this.screenLoadingService.hide())).subscribe({
+      next: () => {
+        this.alertService.success(aprobada ? "La revisión fue aprobada; ahora puedes cerrar la incidencia." : "La revisión fue rechazada; la incidencia no puede cerrarse.");
+        this.cargarIncidencias();
+      },
       error: (error: HttpErrorResponse) => this.mostrarError(error),
     });
   }
-  private aplicarFiltrado(): void {
-    const filters = this.filterForm.getRawValue();
-    const coincide = (value: string | undefined, filter: string | null): boolean => !filter?.trim() || (value ?? "").toLowerCase().includes(filter.trim().toLowerCase());
-    const igual = (value: string | undefined, filter: string | null): boolean => !filter || (value ?? "") === filter;
-    const filtradas = this.incidenciasTodas.filter((item) => coincide(item.codigo, filters.codigo) && coincide(item.titulo, filters.titulo) && coincide(item.reportante, filters.reportante) && igual(item.estado, filters.estado) && igual(item.categoria, filters.categoria) && igual(item.prioridad, filters.prioridad) && igual(item.severidad, filters.severidad) && igual(item.ubicacion, filters.ubicacion));
-    this.totalItems = filtradas.length;
-    const maxPage = Math.max(1, Math.ceil(this.totalItems / this.pageSize));
-    this.page = Math.min(this.page, maxPage);
-    const start = (this.page - 1) * this.pageSize;
-    this.incidencias = filtradas.slice(start, start + this.pageSize);
+  private confirmarReapertura(idIncidencia: number, observacion: string): void {
+    this.screenLoadingService.show();
+    this.incidenciaApi.reabrirIncidencia({ body: { idIncidencia, observacion } }).pipe(finalize(() => this.screenLoadingService.hide())).subscribe({
+      next: () => { this.alertService.success("La incidencia fue reabierta y queda pendiente de reanudar su atención."); this.cargarIncidencias(); },
+      error: (error: HttpErrorResponse) => this.mostrarError(error),
+    });
+  }
+  private solicitarObservacion(incidencia: IncidenciaResponse, titulo: string, descripcion: string, etiquetaObservacion: string, textoAccion: string, iconoAccion: string, confirmar: (observacion: string) => void): void {
+    const modalRef = this.modalService.open(IncidenciaReabrirModalComponent, { centered: true, size: "lg", backdrop: "static", keyboard: false });
+    modalRef.componentInstance.incidencia = incidencia;
+    modalRef.componentInstance.titulo = titulo;
+    modalRef.componentInstance.descripcion = descripcion;
+    modalRef.componentInstance.etiquetaObservacion = etiquetaObservacion;
+    modalRef.componentInstance.textoAccion = textoAccion;
+    modalRef.componentInstance.iconoAccion = iconoAccion;
+    modalRef.result.then((value: IncidenciaReabrirResult) => confirmar(value.observacion)).catch(() => undefined);
   }
   private mostrarError(error: HttpErrorResponse): void { const body = error.error as { message?: string } | null; this.alertService.error(body?.message ?? "No se pudieron cargar las incidencias."); }
 }

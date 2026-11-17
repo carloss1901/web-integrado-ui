@@ -8,6 +8,7 @@ import { SessionRole, SessionService } from '../../../core/services/session.serv
 import { ScreenLoadingComponent } from '../screen-loading/screen-loading.component';
 import { ScreenLoadingService } from '../../../core/services/screen-loading.service';
 import { finalize } from 'rxjs';
+import { Role } from '../../../core/constants/role.enum';
 
 @Component({
   selector: 'app-shell',
@@ -35,6 +36,14 @@ export class AppShellComponent {
 
   get user() {
     return this.session.currentUser;
+  }
+
+  get sessionEntryAt(): Date {
+    return this.session.sessionStartedAt;
+  }
+
+  get esAdministrador(): boolean {
+    return this.session.selectedRole?.id === Role.ADMINISTRADOR;
   }
 
   seleccionarRol(role: SessionRole): void {

@@ -12,12 +12,14 @@ import { map, filter } from 'rxjs/operators';
 import { ActualizarEstadoIncidenciaRequest } from '../models/actualizar-estado-incidencia-request';
 import { ActualizarIncidenciaRequest } from '../models/actualizar-incidencia-request';
 import { AsignarResponsableRequest } from '../models/asignar-responsable-request';
+import { CambiarEstadoIncidenciaRequest } from '../models/cambiar-estado-incidencia-request';
 import { ClasificarIncidenciaRequest } from '../models/clasificar-incidencia-request';
 import { CustomPageIncidenciaAccionCorrectivaResponse } from '../models/custom-page-incidencia-accion-correctiva-response';
 import { CustomPageIncidenciaComentarioResponse } from '../models/custom-page-incidencia-comentario-response';
 import { CustomPageIncidenciaEvidenciaResponse } from '../models/custom-page-incidencia-evidencia-response';
 import { CustomPageIncidenciaHistorialResponse } from '../models/custom-page-incidencia-historial-response';
 import { CustomPageIncidenciaResponse } from '../models/custom-page-incidencia-response';
+import { DashboardIncidenciasResponse } from '../models/dashboard-incidencias-response';
 import { IncidenciaBusquedaResponse } from '../models/incidencia-busqueda-response';
 import { IncidenciaResponse } from '../models/incidencia-response';
 import { IndicadoresIncidenciaResponse } from '../models/indicadores-incidencia-response';
@@ -26,6 +28,7 @@ import { RegistrarAccionCorrectivaRequest } from '../models/registrar-accion-cor
 import { RegistrarComentarioRequest } from '../models/registrar-comentario-request';
 import { RegistrarEvidenciaRequest } from '../models/registrar-evidencia-request';
 import { RegistrarIncidenciaRequest } from '../models/registrar-incidencia-request';
+import { RegistrarRevisionSupervisorRequest } from '../models/registrar-revision-supervisor-request';
 
 @Injectable({
   providedIn: 'root',
@@ -88,6 +91,62 @@ export class IncidenciaControllerService extends BaseService {
 }> {
 
     return this.actualizarIncidencia$Response(params).pipe(
+      map((r: StrictHttpResponse<{
+}>) => r.body as {
+})
+    );
+  }
+
+  /**
+   * Path part for operation registrarRevisionSupervisor
+   */
+  static readonly RegistrarRevisionSupervisorPath = '/incidencias/revision-supervisor';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `registrarRevisionSupervisor()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  registrarRevisionSupervisor$Response(params: {
+    context?: HttpContext
+    body: RegistrarRevisionSupervisorRequest
+  }
+): Observable<StrictHttpResponse<{
+}>> {
+
+    const rb = new RequestBuilder(this.rootUrl, IncidenciaControllerService.RegistrarRevisionSupervisorPath, 'post');
+    if (params) {
+      rb.body(params.body, 'application/json');
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json',
+      context: params?.context
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<{
+        }>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `registrarRevisionSupervisor$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  registrarRevisionSupervisor(params: {
+    context?: HttpContext
+    body: RegistrarRevisionSupervisorRequest
+  }
+): Observable<{
+}> {
+
+    return this.registrarRevisionSupervisor$Response(params).pipe(
       map((r: StrictHttpResponse<{
 }>) => r.body as {
 })
@@ -207,6 +266,62 @@ export class IncidenciaControllerService extends BaseService {
   }
 
   /**
+   * Path part for operation reanudarAtencion
+   */
+  static readonly ReanudarAtencionPath = '/incidencias/reanudar-atencion';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `reanudarAtencion()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  reanudarAtencion$Response(params: {
+    context?: HttpContext
+    body: CambiarEstadoIncidenciaRequest
+  }
+): Observable<StrictHttpResponse<{
+}>> {
+
+    const rb = new RequestBuilder(this.rootUrl, IncidenciaControllerService.ReanudarAtencionPath, 'post');
+    if (params) {
+      rb.body(params.body, 'application/json');
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json',
+      context: params?.context
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<{
+        }>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `reanudarAtencion$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  reanudarAtencion(params: {
+    context?: HttpContext
+    body: CambiarEstadoIncidenciaRequest
+  }
+): Observable<{
+}> {
+
+    return this.reanudarAtencion$Response(params).pipe(
+      map((r: StrictHttpResponse<{
+}>) => r.body as {
+})
+    );
+  }
+
+  /**
    * Path part for operation reabrirIncidencia
    */
   static readonly ReabrirIncidenciaPath = '/incidencias/reabrir';
@@ -256,6 +371,62 @@ export class IncidenciaControllerService extends BaseService {
 }> {
 
     return this.reabrirIncidencia$Response(params).pipe(
+      map((r: StrictHttpResponse<{
+}>) => r.body as {
+})
+    );
+  }
+
+  /**
+   * Path part for operation ponerEnEspera
+   */
+  static readonly PonerEnEsperaPath = '/incidencias/poner-en-espera';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `ponerEnEspera()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  ponerEnEspera$Response(params: {
+    context?: HttpContext
+    body: CambiarEstadoIncidenciaRequest
+  }
+): Observable<StrictHttpResponse<{
+}>> {
+
+    const rb = new RequestBuilder(this.rootUrl, IncidenciaControllerService.PonerEnEsperaPath, 'post');
+    if (params) {
+      rb.body(params.body, 'application/json');
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json',
+      context: params?.context
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<{
+        }>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `ponerEnEspera$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  ponerEnEspera(params: {
+    context?: HttpContext
+    body: CambiarEstadoIncidenciaRequest
+  }
+): Observable<{
+}> {
+
+    return this.ponerEnEspera$Response(params).pipe(
       map((r: StrictHttpResponse<{
 }>) => r.body as {
 })
@@ -536,6 +707,62 @@ export class IncidenciaControllerService extends BaseService {
 }> {
 
     return this.cerrarIncidencia$Response(params).pipe(
+      map((r: StrictHttpResponse<{
+}>) => r.body as {
+})
+    );
+  }
+
+  /**
+   * Path part for operation cancelarIncidencia
+   */
+  static readonly CancelarIncidenciaPath = '/incidencias/cancelar';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `cancelarIncidencia()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  cancelarIncidencia$Response(params: {
+    context?: HttpContext
+    body: CambiarEstadoIncidenciaRequest
+  }
+): Observable<StrictHttpResponse<{
+}>> {
+
+    const rb = new RequestBuilder(this.rootUrl, IncidenciaControllerService.CancelarIncidenciaPath, 'post');
+    if (params) {
+      rb.body(params.body, 'application/json');
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json',
+      context: params?.context
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<{
+        }>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `cancelarIncidencia$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  cancelarIncidencia(params: {
+    context?: HttpContext
+    body: CambiarEstadoIncidenciaRequest
+  }
+): Observable<{
+}> {
+
+    return this.cancelarIncidencia$Response(params).pipe(
       map((r: StrictHttpResponse<{
 }>) => r.body as {
 })
@@ -993,6 +1220,63 @@ export class IncidenciaControllerService extends BaseService {
   }
 
   /**
+   * Path part for operation listarIncidenciasProximasAVencer
+   */
+  static readonly ListarIncidenciasProximasAVencerPath = '/incidencias/proximas-a-vencer';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `listarIncidenciasProximasAVencer()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listarIncidenciasProximasAVencer$Response(params?: {
+    horas?: number;
+    page?: number;
+    size?: number;
+    context?: HttpContext
+  }
+): Observable<StrictHttpResponse<CustomPageIncidenciaResponse>> {
+
+    const rb = new RequestBuilder(this.rootUrl, IncidenciaControllerService.ListarIncidenciasProximasAVencerPath, 'get');
+    if (params) {
+      rb.query('horas', params.horas, {});
+      rb.query('page', params.page, {});
+      rb.query('size', params.size, {});
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json',
+      context: params?.context
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<CustomPageIncidenciaResponse>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `listarIncidenciasProximasAVencer$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listarIncidenciasProximasAVencer(params?: {
+    horas?: number;
+    page?: number;
+    size?: number;
+    context?: HttpContext
+  }
+): Observable<CustomPageIncidenciaResponse> {
+
+    return this.listarIncidenciasProximasAVencer$Response(params).pipe(
+      map((r: StrictHttpResponse<CustomPageIncidenciaResponse>) => r.body as CustomPageIncidenciaResponse)
+    );
+  }
+
+  /**
    * Path part for operation listarMisIncidenciasReportadas
    */
   static readonly ListarMisIncidenciasReportadasPath = '/incidencias/mis-reportadas';
@@ -1137,6 +1421,75 @@ export class IncidenciaControllerService extends BaseService {
   }
 
   /**
+   * Path part for operation listarIncidenciasPaginadas
+   */
+  static readonly ListarIncidenciasPaginadasPath = '/incidencias/listar-paginado';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `listarIncidenciasPaginadas()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listarIncidenciasPaginadas$Response(params?: {
+    idResponsable?: number;
+    idSeveridad?: number;
+    idEstado?: number;
+    inicio?: string;
+    fin?: string;
+    page?: number;
+    size?: number;
+    context?: HttpContext
+  }
+): Observable<StrictHttpResponse<CustomPageIncidenciaResponse>> {
+
+    const rb = new RequestBuilder(this.rootUrl, IncidenciaControllerService.ListarIncidenciasPaginadasPath, 'get');
+    if (params) {
+      rb.query('idResponsable', params.idResponsable, {});
+      rb.query('idSeveridad', params.idSeveridad, {});
+      rb.query('idEstado', params.idEstado, {});
+      rb.query('inicio', params.inicio, {});
+      rb.query('fin', params.fin, {});
+      rb.query('page', params.page, {});
+      rb.query('size', params.size, {});
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json',
+      context: params?.context
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<CustomPageIncidenciaResponse>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `listarIncidenciasPaginadas$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  listarIncidenciasPaginadas(params?: {
+    idResponsable?: number;
+    idSeveridad?: number;
+    idEstado?: number;
+    inicio?: string;
+    fin?: string;
+    page?: number;
+    size?: number;
+    context?: HttpContext
+  }
+): Observable<CustomPageIncidenciaResponse> {
+
+    return this.listarIncidenciasPaginadas$Response(params).pipe(
+      map((r: StrictHttpResponse<CustomPageIncidenciaResponse>) => r.body as CustomPageIncidenciaResponse)
+    );
+  }
+
+  /**
    * Path part for operation obtenerIndicadores
    */
   static readonly ObtenerIndicadoresPath = '/incidencias/indicadores';
@@ -1181,6 +1534,60 @@ export class IncidenciaControllerService extends BaseService {
 
     return this.obtenerIndicadores$Response(params).pipe(
       map((r: StrictHttpResponse<IndicadoresIncidenciaResponse>) => r.body as IndicadoresIncidenciaResponse)
+    );
+  }
+
+  /**
+   * Path part for operation obtenerDashboardIncidencias
+   */
+  static readonly ObtenerDashboardIncidenciasPath = '/incidencias/dashboard';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `obtenerDashboardIncidencias()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  obtenerDashboardIncidencias$Response(params?: {
+    inicio?: string;
+    fin?: string;
+    context?: HttpContext
+  }
+): Observable<StrictHttpResponse<DashboardIncidenciasResponse>> {
+
+    const rb = new RequestBuilder(this.rootUrl, IncidenciaControllerService.ObtenerDashboardIncidenciasPath, 'get');
+    if (params) {
+      rb.query('inicio', params.inicio, {});
+      rb.query('fin', params.fin, {});
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json',
+      context: params?.context
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<DashboardIncidenciasResponse>;
+      })
+    );
+  }
+
+  /**
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `obtenerDashboardIncidencias$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  obtenerDashboardIncidencias(params?: {
+    inicio?: string;
+    fin?: string;
+    context?: HttpContext
+  }
+): Observable<DashboardIncidenciasResponse> {
+
+    return this.obtenerDashboardIncidencias$Response(params).pipe(
+      map((r: StrictHttpResponse<DashboardIncidenciasResponse>) => r.body as DashboardIncidenciasResponse)
     );
   }
 

@@ -58,6 +58,17 @@ export class IncidenciaViewModalComponent implements OnInit {
     impacto: [null as number | null, [Validators.required, Validators.min(1), Validators.max(4)]],
     urgencia: [null as number | null, [Validators.required, Validators.min(1), Validators.max(4)]],
   });
+  readonly comentarioForm = this.formBuilder.group({
+    comentario: ["", [Validators.required, Validators.maxLength(1000)]],
+  });
+  readonly evidenciaForm = this.formBuilder.group({
+    nombreArchivo: ["", [Validators.required, Validators.maxLength(255)]],
+    rutaArchivo: ["", [Validators.required, Validators.maxLength(500)]],
+    descripcion: ["", [Validators.maxLength(500)]],
+  });
+  readonly accionForm = this.formBuilder.group({
+    descripcion: ["", [Validators.required, Validators.maxLength(1000)]],
+  });
 
   constructor(
     private readonly formBuilder: FormBuilder,
@@ -87,8 +98,8 @@ export class IncidenciaViewModalComponent implements OnInit {
   get esSupervisor(): boolean { return this.session.selectedRole?.id === Role.SUPERVISOR; }
   get esAdministrador(): boolean { return this.session.selectedRole?.id === Role.ADMINISTRADOR; }
   get puedeVerClasificacion(): boolean { return !this.esReportante; }
-  get puedeVerSeguimiento(): boolean { return this.esResponsable || this.esSupervisor || this.esAdministrador; }
-  get puedeVerSeguimientoCompleto(): boolean { return this.esSupervisor || this.esAdministrador; }
+  get puedeVerSeguimiento(): boolean { return true; }
+  get puedeRegistrarAccion(): boolean { return this.esResponsable || this.esSupervisor || this.esAdministrador; }
 
   private normalizar(value?: string): string {
     return (value ?? "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -117,12 +128,8 @@ export class IncidenciaViewModalComponent implements OnInit {
     const idIncidencia = this.incidencia.idIncidencia!;
     this.cargandoTrazabilidad = true;
     forkJoin({
-      historial: this.puedeVerSeguimientoCompleto
-        ? this.incidenciaApi.listarHistorial({ idIncidencia, page: 1, size: 50 }).pipe(catchError(() => of({ data: [] })))
-        : of({ data: [] }),
-      comentarios: this.puedeVerSeguimientoCompleto
-        ? this.incidenciaApi.listarComentarios({ idIncidencia, page: 1, size: 50 }).pipe(catchError(() => of({ data: [] })))
-        : of({ data: [] }),
+      historial: this.incidenciaApi.listarHistorial({ idIncidencia, page: 1, size: 50 }).pipe(catchError(() => of({ data: [] }))),
+      comentarios: this.incidenciaApi.listarComentarios({ idIncidencia, page: 1, size: 50 }).pipe(catchError(() => of({ data: [] }))),
       evidencias: this.incidenciaApi.listarEvidencias({ idIncidencia, page: 1, size: 50 }).pipe(catchError(() => of({ data: [] }))),
       acciones: this.incidenciaApi.listarAccionesCorrectivas({ idIncidencia, page: 1, size: 50 }).pipe(catchError(() => of({ data: [] }))),
     }).subscribe((resultados) => {
@@ -159,6 +166,60 @@ export class IncidenciaViewModalComponent implements OnInit {
       return;
     }
     this.activeModal.close({ idIncidencia: this.incidencia.idIncidencia, ...this.form.getRawValue() } as IncidenciaRevisionResult);
+  }
+
+  registrarComentario(): void {
+    const idIncidencia = this.incidencia.idIncidencia;
+    if (idIncidencia === undefined || this.comentarioForm.invalid) {
+      this.comentarioForm.markAllAsTouched();
+      return;
+    }
+    this.incidenciaApi.registrarComentario({ body: { idIncidencia, comentario: this.comentarioForm.controls.comentario.value!.trim() } }).subscribe({
+      next: () => {
+        this.comentarioForm.reset();
+        this.alertService.success("Comentario registrado correctamente.");
+        this.cargarTrazabilidad();
+      },
+      error: () => this.alertService.error("No se pudo registrar el comentario."),
+    });
+  }
+
+  registrarEvidencia(): void {
+    const idIncidencia = this.incidencia.idIncidencia;
+    if (idIncidencia === undefined || this.evidenciaForm.invalid) {
+      this.evidenciaForm.markAllAsTouched();
+      return;
+    }
+    const value = this.evidenciaForm.getRawValue();
+    this.incidenciaApi.registrarEvidencia({ body: {
+      idIncidencia,
+      nombreArchivo: value.nombreArchivo!.trim(),
+      rutaArchivo: value.rutaArchivo!.trim(),
+      descripcion: value.descripcion?.trim() || undefined,
+    } }).subscribe({
+      next: () => {
+        this.evidenciaForm.reset();
+        this.alertService.success("Evidencia registrada correctamente.");
+        this.cargarTrazabilidad();
+      },
+      error: () => this.alertService.error("No se pudo registrar la evidencia."),
+    });
+  }
+
+  registrarAccion(): void {
+    const idIncidencia = this.incidencia.idIncidencia;
+    if (idIncidencia === undefined || this.accionForm.invalid) {
+      this.accionForm.markAllAsTouched();
+      return;
+    }
+    this.incidenciaApi.registrarAccionCorrectiva({ body: { idIncidencia, descripcion: this.accionForm.controls.descripcion.value!.trim() } }).subscribe({
+      next: () => {
+        this.accionForm.reset();
+        this.alertService.success("Acción correctiva registrada correctamente.");
+        this.cargarTrazabilidad();
+      },
+      error: () => this.alertService.error("No se pudo registrar la acción correctiva."),
+    });
   }
 
   cerrar(): void {

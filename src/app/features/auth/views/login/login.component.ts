@@ -20,8 +20,7 @@ export class LoginComponent {
 
   readonly loginForm = this.formBuilder.nonNullable.group({
     usuario: ['', Validators.required],
-    contrasenia: ['', Validators.required],
-    recordar: [false]
+    contrasenia: ['', Validators.required]
   });
 
   constructor(
@@ -39,9 +38,9 @@ export class LoginComponent {
 
     this.loading = true;
     this.errorMessage = '';
-    const { usuario, contrasenia, recordar } = this.loginForm.getRawValue();
+    const { usuario, contrasenia } = this.loginForm.getRawValue();
 
-    this.authService.login(usuario, contrasenia, recordar).pipe(
+    this.authService.login(usuario, contrasenia, false).pipe(
       finalize(() => this.loading = false)
     ).subscribe({
       next: () => this.router.navigate(['/inicio']),

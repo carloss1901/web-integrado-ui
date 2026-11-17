@@ -52,7 +52,11 @@ export class IncidenciaAsignarResponsableModalComponent implements OnInit {
           .filter((usuario: ResponsableResponse) => usuario.idUsuario !== undefined)
           .map((usuario: ResponsableResponse) => ({ id: usuario.idUsuario as number, nombre: usuario.nombre || "Responsable" }));
       },
-      error: () => this.alertService.error("No se pudieron cargar los responsables de atención."),
+      error: () => {
+        this.responsables = [];
+        this.form.controls.idResponsable.reset();
+        this.alertService.error("No se pudieron cargar los responsables de atención.");
+      },
     });
   }
 

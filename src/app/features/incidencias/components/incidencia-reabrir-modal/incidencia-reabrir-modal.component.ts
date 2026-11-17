@@ -7,7 +7,7 @@ import { PlaceholderEnum } from "../../../../core/enums/placeholder.enum";
 import { AlertService } from "../../../../core/services/alert.service";
 import { AppButtonComponent } from "../../../../shared/components/app-button/app-button.component";
 
-export interface IncidenciaReabrirResult { observacion: string; }
+export interface IncidenciaReabrirResult { observacion: string; aprobada?: boolean; }
 
 @Component({
   selector: "app-incidencia-reabrir-modal",
@@ -18,8 +18,17 @@ export interface IncidenciaReabrirResult { observacion: string; }
 export class IncidenciaReabrirModalComponent {
   readonly placeholders = PlaceholderEnum;
   @Input({ required: true }) incidencia!: IncidenciaResponse;
+  @Input() titulo = "Reabrir incidencia";
+  @Input() descripcion = "Indica por qué la incidencia debe volver a atención.";
+  @Input() etiquetaObservacion = "Observación";
+  @Input() textoAccion = "Reabrir";
+  @Input() iconoAccion = "rotate-ccw";
+  @Input() requiereDecision = false;
   submitted = false;
-  readonly form = this.formBuilder.group({ observacion: ["", [Validators.required, Validators.maxLength(1000)]] });
+  readonly form = this.formBuilder.group({
+    observacion: ["", [Validators.required, Validators.maxLength(1000)]],
+    aprobada: [null as boolean | null],
+  });
 
   constructor(private readonly formBuilder: FormBuilder, public readonly activeModal: NgbActiveModal, private readonly alertService: AlertService) {}
 
@@ -29,10 +38,14 @@ export class IncidenciaReabrirModalComponent {
   }
 
   guardar(): void {
+    if (this.requiereDecision && this.form.controls.aprobada.value === null) {
+      this.alertService.warning("Selecciona una decisión de revisión.");
+      return;
+    }
     this.submitted = true;
     this.form.markAllAsTouched();
     if (this.form.invalid) {
-      this.alertService.warning("Registra la observación para reabrir la incidencia.");
+      this.alertService.warning("Registra una observación para continuar.");
       return;
     }
     this.activeModal.close(this.form.getRawValue() as IncidenciaReabrirResult);

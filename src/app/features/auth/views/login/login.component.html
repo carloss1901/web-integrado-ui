@@ -26,7 +26,7 @@
         </div>
 
         <div class="field-group">
-          <div class="label-row"><label for="contrasenia">Contraseña</label><a href="javascript:void(0)">¿Olvidaste tu contraseña?</a></div>
+          <label for="contrasenia">Contraseña</label>
           <div class="input-wrap">
             <span class="field-icon feather icon-lock" aria-hidden="true"></span>
             <input id="contrasenia" [type]="passwordVisible ? 'text' : 'password'" formControlName="contrasenia" placeholder="Ingresa tu contraseña" autocomplete="current-password" />
@@ -35,7 +35,6 @@
           <small *ngIf="submitted && loginForm.controls.contrasenia.invalid" class="field-error">Ingresa tu contraseña.</small>
         </div>
 
-        <label class="remember-option"><input type="checkbox" formControlName="recordar" /><span>Recordar sesión en este dispositivo</span></label>
         <p *ngIf="errorMessage" class="login-error" role="alert">{{ errorMessage }}</p>
         <button class="login-button" type="submit" [disabled]="loading"><span *ngIf="loading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>{{ loading ? 'Ingresando...' : 'Ingresar' }} <span *ngIf="!loading" class="feather icon-arrow-right" aria-hidden="true"></span></button>
       </form>

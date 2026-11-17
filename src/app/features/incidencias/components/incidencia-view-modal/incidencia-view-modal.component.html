@@ -59,7 +59,7 @@
         <h3>Seguimiento de la incidencia</h3>
         @if (cargandoTrazabilidad) { <p class="ui-modal-description">Cargando seguimiento...</p> } @else {
           <div class="ui-traceability-grid">
-            @if (puedeVerSeguimientoCompleto) {
+            @if (true) {
               <div class="ui-traceability-section ui-traceability-section--history">
                 <h4>Historial</h4>
                 <ol class="ui-incident-timeline">
@@ -67,15 +67,44 @@
                     <li [class]="historialClass(item.tipoEvento)"><span class="ui-incident-timeline__marker"></span><div><strong>{{ item.tipoEvento }}</strong><br><small>{{ item.usuario }} · {{ item.fechaEvento }}</small><br>{{ item.descripcion || "-" }}</div></li>
                   } @empty { <li class="ui-empty-text">Sin movimientos registrados.</li> }
                 </ol>
+                @for (item of historial; track item.idHistorial) {
+                  @if (item.valorAnterior || item.valorNuevo) {
+                    <p><small>Anterior: {{ item.valorAnterior || "-" }} · Nuevo: {{ item.valorNuevo || "-" }}</small></p>
+                  }
+                }
               </div>
             }
             <div class="ui-traceability-section"><h4>Acciones correctivas</h4>@for (item of acciones; track item.idAccionCorrectiva) { <p><strong>{{ item.usuario }}</strong><br><small>{{ item.fechaRegistro }}</small><br>{{ item.descripcion }}</p> } @empty { <p class="ui-empty-text">Sin acciones registradas.</p> }</div>
-            @if (puedeVerSeguimientoCompleto) {
+            @if (true) {
               <div class="ui-traceability-section"><h4>Comentarios</h4>@for (item of comentarios; track item.idComentario) { <p><strong>{{ item.usuario }}</strong><br><small>{{ item.fechaRegistro }}</small><br>{{ item.comentario }}</p> } @empty { <p class="ui-empty-text">Sin comentarios registrados.</p> }</div>
             }
             <div class="ui-traceability-section"><h4>Evidencias</h4>@for (item of evidencias; track item.idEvidencia) { <p><strong>{{ item.nombreArchivo }}</strong><br><small>{{ item.usuario }} · {{ item.fechaRegistro }}</small><br>{{ item.descripcion || "-" }}</p> } @empty { <p class="ui-empty-text">Sin evidencias registradas.</p> }</div>
           </div>
         }
+        <section class="ui-traceability-section ui-collaboration mt-3">
+          <h4>Registrar colaboración</h4>
+          <form [formGroup]="comentarioForm" (ngSubmit)="registrarComentario()" class="mb-3">
+            <label class="ui-field-label" for="comentario">Comentario</label>
+            <textarea id="comentario" rows="3" formControlName="comentario" placeholder="Escribe un comentario"></textarea>
+            <app-button texto="Registrar comentario" icon="message-circle" color="primary" type="submit"></app-button>
+          </form>
+          <form [formGroup]="evidenciaForm" (ngSubmit)="registrarEvidencia()" class="mb-3">
+            <label class="ui-field-label" for="nombreEvidencia">Nombre de evidencia</label>
+            <input id="nombreEvidencia" type="text" formControlName="nombreArchivo" placeholder="ejemplo.png">
+            <label class="ui-field-label" for="rutaEvidencia">Ruta o URL de evidencia</label>
+            <input id="rutaEvidencia" type="text" formControlName="rutaArchivo" placeholder="/evidencias/ejemplo.png">
+            <label class="ui-field-label" for="descripcionEvidencia">Descripción</label>
+            <textarea id="descripcionEvidencia" rows="2" formControlName="descripcion" placeholder="Descripción opcional"></textarea>
+            <app-button texto="Registrar evidencia" icon="paperclip" color="primary" type="submit"></app-button>
+          </form>
+          @if (puedeRegistrarAccion) {
+            <form [formGroup]="accionForm" (ngSubmit)="registrarAccion()">
+              <label class="ui-field-label" for="accionCorrectiva">Acción correctiva</label>
+              <textarea id="accionCorrectiva" rows="3" formControlName="descripcion" placeholder="Describe la acción correctiva"></textarea>
+              <app-button texto="Registrar acción" icon="tool" color="primary" type="submit"></app-button>
+            </form>
+          }
+        </section>
       </section>
     }
   }

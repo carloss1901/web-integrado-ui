@@ -25,19 +25,33 @@
             <td><span [class]="estadoClass(incidencia.estado)"><span class="ui-status-dot"></span>{{ incidencia.estado || "—" }}</span></td>
             <td class="text-center">
               <div class="ui-table-actions">
-                @if (puedeRevisar) {
+                @if (puedeClasificarIncidencia(incidencia)) {
                   <button type="button" class="ui-icon-button ui-icon-button--edit" title="Clasificar incidencia" (click)="review.emit(incidencia)"><span class="feather icon-edit" aria-hidden="true"></span><span class="visually-hidden">Clasificar</span></button>
+                }
+                @if (puedeAsignarResponsable(incidencia)) {
                   <button type="button" class="ui-icon-button ui-icon-button--assign" title="Asignar responsable" (click)="assign.emit(incidencia)"><span class="feather icon-user-check" aria-hidden="true"></span><span class="visually-hidden">Asignar responsable</span></button>
                 }
-                @if (puedeIniciarAtencion && esAsignada(incidencia)) {
+                @if (puedeIniciarAtencionIncidencia(incidencia)) {
                   <button type="button" class="ui-icon-button ui-icon-button--start" title="Iniciar atención" (click)="startAttention.emit(incidencia)"><span class="feather icon-play" aria-hidden="true"></span><span class="visually-hidden">Iniciar atención</span></button>
                 }
-                @if (puedeIniciarAtencion && esEnAtencion(incidencia)) {
+                @if (puedePonerEnEspera(incidencia)) {
+                  <button type="button" class="ui-icon-button ui-icon-button--edit" title="Poner en espera" (click)="wait.emit(incidencia)"><span class="feather icon-pause" aria-hidden="true"></span><span class="visually-hidden">Poner en espera</span></button>
                   <button type="button" class="ui-icon-button ui-icon-button--resolve" title="Resolver incidencia" (click)="resolve.emit(incidencia)"><span class="feather icon-check-circle" aria-hidden="true"></span><span class="visually-hidden">Resolver incidencia</span></button>
                 }
-                @if (puedeCerrar && esResuelta(incidencia)) {
+                @if (puedeReanudarAtencion(incidencia)) {
+                  <button type="button" class="ui-icon-button ui-icon-button--start" title="Reanudar atención" (click)="resume.emit(incidencia)"><span class="feather icon-play" aria-hidden="true"></span><span class="visually-hidden">Reanudar atención</span></button>
+                }
+                @if (puedeReabrirIncidencia(incidencia)) {
                   <button type="button" class="ui-icon-button ui-icon-button--reopen" title="Devolver a atención" (click)="reopen.emit(incidencia)"><span class="feather icon-rotate-ccw" aria-hidden="true"></span><span class="visually-hidden">Reabrir incidencia</span></button>
+                  @if (requiereRevisionSupervisor(incidencia)) {
+                    <button type="button" class="ui-icon-button ui-icon-button--edit" title="Revisar incidencia crítica" (click)="supervisorReview.emit(incidencia)"><span class="feather icon-clipboard" aria-hidden="true"></span><span class="visually-hidden">Revisar incidencia crítica</span></button>
+                  }
+                }
+                @if (puedeCerrarIncidencia(incidencia)) {
                   <button type="button" class="ui-icon-button ui-icon-button--close" title="Cerrar incidencia" (click)="close.emit(incidencia)"><span class="feather icon-lock" aria-hidden="true"></span><span class="visually-hidden">Cerrar incidencia</span></button>
+                }
+                @if (puedeCancelarIncidencia(incidencia)) {
+                  <button type="button" class="ui-icon-button ui-icon-button--close" title="Cancelar incidencia" (click)="cancel.emit(incidencia)"><span class="feather icon-slash" aria-hidden="true"></span><span class="visually-hidden">Cancelar incidencia</span></button>
                 }
                 <button type="button" class="ui-icon-button ui-icon-button--view" title="Visualizar incidencia" (click)="view.emit(incidencia)"><span class="feather icon-eye" aria-hidden="true"></span><span class="visually-hidden">Visualizar</span></button>
               </div>

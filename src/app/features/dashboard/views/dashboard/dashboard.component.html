@@ -2,11 +2,11 @@
   <div class="frame-layout__header">
     <div class="dashboard-heading">
       <div>
-        <p class="eyebrow">PANEL DE INICIO</p>
-        <h1>Resumen general</h1>
-        <p class="subtitle">Consulta la actividad y el estado operativo de CampusSeguro 360.</p>
+        <p class="eyebrow">CENTRO DE CONTROL</p>
+        <h1>Dashboard de incidencias</h1>
+        <p class="subtitle">Indicadores operativos, SLA y carga de atención de Campus Seguro.</p>
       </div>
-      <span class="heading-date"><span class="feather icon-calendar" aria-hidden="true"></span> Hoy</span>
+      <span class="heading-date"><span class="feather icon-calendar" aria-hidden="true"></span> {{ cargando ? 'Actualizando...' : 'Datos actualizados' }}</span>
     </div>
   </div>
 
@@ -15,48 +15,45 @@
       <div class="welcome-copy">
         <span class="welcome-icon feather icon-shield" aria-hidden="true"></span>
         <div>
-          <p class="eyebrow">CENTRO DE CONTROL</p>
+          <p class="eyebrow">PANEL OPERATIVO</p>
           <h2 id="welcome-title">Bienvenido, {{ user.name }}</h2>
-          <p class="subtitle">Gestiona incidencias, prioriza acciones y mantén la seguridad del campus bajo control.</p>
+          <p class="subtitle">Consulta el estado actual de los reportes y prioriza las acciones de atención.</p>
         </div>
       </div>
-      <button type="button" class="btn btn-primary welcome-action"><span class="feather icon-plus" aria-hidden="true"></span> Nuevo registro</button>
     </section>
 
-    <section class="metrics" aria-label="Resumen de indicadores">
-      <article *ngFor="let metric of metrics" class="metric card-modern shadow-sm border-0" [class]="metric.color">
-        <div class="metric-icon"><span class="feather" [class]="metric.icon" aria-hidden="true"></span></div>
-        <div class="metric-content">
-          <p>{{ metric.label }}</p>
-          <strong>{{ metric.value }}</strong>
-          <small>{{ metric.detail }}</small>
-        </div>
-        <span class="metric-trend feather icon-trending-up" aria-hidden="true"></span>
-      </article>
-    </section>
+    <form [formGroup]="filtros" (ngSubmit)="aplicarFiltros()" class="dashboard-filters card-modern" aria-label="Filtros del dashboard">
+      <div><label for="inicio">Desde</label><input id="inicio" type="date" formControlName="inicio"></div>
+      <div><label for="fin">Hasta</label><input id="fin" type="date" formControlName="fin"></div>
+      <div class="dashboard-filters__actions"><button type="submit" class="btn btn-primary">Aplicar periodo</button><button type="button" class="btn btn-light" (click)="limpiarFiltros()">Limpiar</button></div>
+    </form>
 
     <p *ngIf="loadError" class="dashboard-message" role="alert">No se pudieron cargar los indicadores. Verifica la conexión con el backend.</p>
 
-    <section class="activity card-modern shadow-sm border-0" aria-labelledby="activity-title">
-      <div class="section-title">
-        <div>
-          <p class="eyebrow">ACTIVIDAD RECIENTE</p>
-          <h2 id="activity-title">Últimos movimientos</h2>
-        </div>
-        <a href="javascript:void(0)">Ver todo <span class="feather icon-arrow-right" aria-hidden="true"></span></a>
-      </div>
-      <div class="rows">
-        <div class="row">
-          <span class="dot success"></span>
-          <div><strong>Proyecto base creado</strong><p>La estructura Angular está lista para nuevos módulos.</p></div>
-          <time>Ahora</time>
-        </div>
-        <div class="row">
-          <span class="dot info"></span>
-          <div><strong>Ruta de inicio configurada</strong><p>El dashboard es la vista predeterminada.</p></div>
-          <time>Hoy</time>
-        </div>
-      </div>
+    <section class="metrics" aria-label="Resumen de indicadores">
+      <article class="metric card-modern shadow-sm border-0 blue"><div class="metric-icon"><span class="feather icon-file-text"></span></div><div class="metric-content"><p>Incidencias del periodo</p><strong>{{ totalPeriodo }}</strong><small>Registros según el rango seleccionado</small></div></article>
+      <article class="metric card-modern shadow-sm border-0 green"><div class="metric-icon"><span class="feather icon-check-circle"></span></div><div class="metric-content"><p>Dentro del SLA</p><strong>{{ dentroSla }}</strong><small>{{ cumplimientoSla }}% de cumplimiento</small></div></article>
+      <article class="metric card-modern shadow-sm border-0 red"><div class="metric-icon"><span class="feather icon-alert-triangle"></span></div><div class="metric-content"><p>SLA incumplido</p><strong>{{ incumplidasSla }}</strong><small>Casos que requieren seguimiento</small></div></article>
+      <article class="metric card-modern shadow-sm border-0 orange"><div class="metric-icon"><span class="feather icon-users"></span></div><div class="metric-content"><p>Responsables sobrecargados</p><strong>{{ responsablesSobrecargados.length }}</strong><small>Umbral definido: {{ umbralSobrecarga }} casos activos</small></div></article>
+    </section>
+
+    <section class="analytics-grid" aria-label="Indicadores agrupados">
+      <article class="analytics-card card-modern"><div class="section-title"><div><p class="eyebrow">RANKING</p><h2>Zonas con más incidencias</h2></div></div><div class="ranking-list">@for (item of dashboard.porZona ?? []; track item.nombre) {<div class="ranking-row"><span>{{ item.nombre || 'Sin zona' }}</span><div class="bar"><i [style.width.%]="anchoBarra(item.total, dashboard.porZona ?? [])"></i></div><strong>{{ item.total ?? 0 }}</strong></div>} @empty {<p class="ui-empty-text">No hay datos para el periodo.</p>}</div></article>
+      <article class="analytics-card card-modern"><div class="section-title"><div><p class="eyebrow">RANKING</p><h2>Categorías con más incidencias</h2></div></div><div class="ranking-list">@for (item of dashboard.porCategoria ?? []; track item.nombre) {<div class="ranking-row"><span>{{ item.nombre || 'Sin categoría' }}</span><div class="bar"><i [style.width.%]="anchoBarra(item.total, dashboard.porCategoria ?? [])"></i></div><strong>{{ item.total ?? 0 }}</strong></div>} @empty {<p class="ui-empty-text">No hay datos para el periodo.</p>}</div></article>
+      <article class="analytics-card card-modern"><div class="section-title"><div><p class="eyebrow">CLASIFICACIÓN</p><h2>Incidencias por severidad</h2></div></div><div class="ranking-list">@for (item of dashboard.porSeveridad ?? []; track item.nombre) {<div class="ranking-row"><span>{{ item.nombre || 'Sin clasificar' }}</span><div class="bar bar--severity"><i [style.width.%]="anchoBarra(item.total, dashboard.porSeveridad ?? [])"></i></div><strong>{{ item.total ?? 0 }}</strong></div>} @empty {<p class="ui-empty-text">No hay datos para el periodo.</p>}</div></article>
+      <article class="analytics-card card-modern"><div class="section-title"><div><p class="eyebrow">CAPACIDAD</p><h2>Carga activa por responsable</h2></div></div><div class="ranking-list">@for (item of dashboard.cargaResponsables ?? []; track item.responsable) {<div class="ranking-row" [class.is-overloaded]="(item.incidenciasActivas ?? 0) >= umbralSobrecarga"><span>{{ item.responsable || 'Sin responsable' }}</span><div class="bar bar--load"><i [style.width.%]="anchoCarga(item.incidenciasActivas)"></i></div><strong>{{ item.incidenciasActivas ?? 0 }}</strong></div>} @empty {<p class="ui-empty-text">No hay responsables con incidencias activas.</p>}</div></article>
+    </section>
+
+    <section class="bottom-grid">
+      <article class="activity card-modern shadow-sm border-0" aria-label="Cumplimiento SLA">
+        <div class="section-title"><div><p class="eyebrow">SLA</p><h2>Tablero de cumplimiento</h2></div><strong class="sla-percent">{{ cumplimientoSla }}%</strong></div>
+        <div class="sla-progress" role="progressbar" [attr.aria-valuenow]="cumplimientoSla" aria-valuemin="0" aria-valuemax="100"><i [style.width.%]="cumplimientoSla"></i></div>
+        <div class="sla-summary"><span class="sla-ok">Dentro de plazo: {{ dentroSla }}</span><span class="sla-late">Incumplidas: {{ incumplidasSla }}</span></div>
+      </article>
+      <article class="activity card-modern shadow-sm border-0" aria-label="Alertas próximas a vencer">
+        <div class="section-title"><div><p class="eyebrow">ALERTAS</p><h2>Próximas a vencer</h2></div></div>
+        <div class="rows">@for (item of proximas; track item.idIncidencia) {<div class="row"><span class="dot info"></span><div><strong>{{ item.codigo }} · {{ item.titulo }}</strong><p>{{ item.severidad || 'Sin severidad' }} · Límite: {{ item.fechaLimite || '-' }}</p></div></div>} @empty {<p class="ui-empty-text">No hay alertas próximas a vencer.</p>}</div>
+      </article>
     </section>
   </div>
 </div>

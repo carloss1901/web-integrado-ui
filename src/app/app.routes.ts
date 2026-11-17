@@ -5,6 +5,7 @@ import { AppLayoutComponent } from './shared/components/app-layout/app-layout.co
 import { authGuard } from './core/guards/auth.guard';
 import { UsuariosComponent } from './features/usuarios/views/usuarios/usuarios.component';
 import { IncidenciasComponent } from './features/incidencias/views/incidencias/incidencias.component';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent, title: 'Iniciar sesión | CampusSeguro 360' },
@@ -14,7 +15,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'inicio', component: DashboardComponent, title: 'Inicio | CampusSeguro 360' },
-      { path: 'usuarios', component: UsuariosComponent, title: 'Usuarios | CampusSeguro 360' },
+      { path: 'usuarios', component: UsuariosComponent, canActivate: [adminGuard], title: 'Usuarios | CampusSeguro 360' },
       { path: 'incidencias', component: IncidenciasComponent, title: 'Incidencias | CampusSeguro 360' }
     ]
   },

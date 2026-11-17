@@ -17,6 +17,7 @@ export interface IncidenciaResponse {
   reincidencia?: number;
   reportante?: string;
   responsable?: string;
+  revisionSupervisorAprobada?: boolean;
   severidad?: string;
   titulo?: string;
   ubicacion?: string;

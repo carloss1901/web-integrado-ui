@@ -20,6 +20,15 @@
           "defaultConfiguration": "production"
         },
         "serve": { "builder": "@angular-devkit/build-angular:dev-server", "configurations": { "development": { "buildTarget": "web-integrado-ui:build:development" }, "production": { "buildTarget": "web-integrado-ui:build:production" } }, "defaultConfiguration": "development" }
+        ,"test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "buildTarget": "web-integrado-ui:build:development",
+            "tsConfig": "tsconfig.spec.json",
+            "runner": "vitest",
+            "watch": false
+          }
+        }
       }
     }
   },

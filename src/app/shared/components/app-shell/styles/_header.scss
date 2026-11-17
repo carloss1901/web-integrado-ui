@@ -1,6 +1,13 @@
 .header_container-fluid {
   min-height: 64px;
-  background-color: #0F2C59;
+  background: linear-gradient(90deg, #0f2c59, #0284c7, #0f2c59);
+  background-size: 200% 100%;
+  animation: header-gradient-slide 7s ease-in-out infinite;
+}
+
+@keyframes header-gradient-slide {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 .header_container-fluid-div {
@@ -18,9 +25,7 @@
   min-height: 64px;
   display: flex;
   align-items: center;
-  background:
-    linear-gradient(90deg, rgba(8, 20, 39, 0.92) 0, rgba(15, 44, 89, 0.84) 180px, #0F2C59 260px),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 55%);
+  background: linear-gradient(90deg, rgba(8, 20, 39, 0.36), rgba(15, 44, 89, 0.08));
   position: relative;
   padding-right: 12px;
 }
@@ -37,10 +42,20 @@
   height: 35px;
   border: 0;
   border-radius: 50%;
-  background-color: #081427;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(8, 20, 39, 0.42);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.header-navbar-button button:hover {
+  background: rgba(8, 20, 39, 0.62);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.04);
 }
 
 .header-navbar-button .icon-menu {
@@ -53,13 +68,25 @@
 
 .link-to-landing {
   color: #fff;
-  font-size: 30px;
+  font-size: clamp(1.15rem, 1.5vw, 1.45rem);
   font-weight: 700;
+  letter-spacing: 0.045em;
+  line-height: 1;
   text-decoration: none !important;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .header_container-fluid {
+    animation: none;
+  }
+}
+
 .header-combo {
-  background-color: #081427;
+  background: rgba(8, 20, 39, 0.28);
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   min-width: 280px;
@@ -79,7 +106,7 @@
 .header-combo-label {
   color: #E3EBF6;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1;
   margin-bottom: 0;
   letter-spacing: 0.08em;
@@ -184,9 +211,11 @@
 
 .header-container-right-username {
   max-width: 280px;
-  font-size: 12px;
-  line-height: 1.25;
+  color: #ffffff;
+  font-size: 14px;
+  line-height: 1.35;
   letter-spacing: 0.02em;
+  text-shadow: 0 1px 2px rgba(8, 20, 39, 0.45);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -194,12 +223,13 @@
 
 .header-container-right-address {
   max-width: 360px;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 11px;
-  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 13px;
+  line-height: 1.45;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(8, 20, 39, 0.4);
 }
 
 .logout-btn {
@@ -229,7 +259,7 @@
 
 @media (max-width: 1280px) {
   .link-to-landing {
-    font-size: 26px;
+    font-size: 1.25rem;
   }
 
   .header-combo {
@@ -244,7 +274,7 @@
   }
 
   .link-to-landing {
-    font-size: 24px;
+    font-size: 1.15rem;
   }
 }
 
